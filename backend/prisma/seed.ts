@@ -9,7 +9,7 @@ async function main() {
   const company = await prisma.companies.upsert({
     where: { id: 1 },
     update: {},
-    create: { name: 'TransitOps Logistics' },
+    create: { name: 'FleetOps Logistics' },
   });
   console.log(`created Company: ${company.name}`);
 
@@ -23,13 +23,13 @@ async function main() {
 
   // user
   const user = await prisma.users.upsert({
-    where: { email: 'alex@transitops.com' },
+    where: { email: 'alex@fleetops.com' },
     update: {},
     create: {
       company_id: company.id,
       role_id: role.id,
       name: 'Alex',
-      email: 'alex@transitops.com',
+      email: 'alex@fleetops.com',
       password: 'password123',
     },
   });
