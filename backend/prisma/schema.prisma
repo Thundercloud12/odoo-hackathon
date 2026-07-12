@@ -22,9 +22,17 @@ model Users {
 }
 
 model Roles {
-  id    Int     @id @default(autoincrement())
-  role  String  @unique
+  id    Int      @id @default(autoincrement())
+  role  RoleType @unique
   users Users[]
+}
+
+enum RoleType {
+  ADMIN
+  DRIVER
+  FLEET_MANAGER
+  SAFETY_OFFICER
+  FINANCIAL_ANALYST
 }
 
 model Companies {

@@ -1,4 +1,5 @@
-import { PrismaClient, DriverStatus, VehicleStatus } from '@prisma/client';
+import { PrismaClient, DriverStatus, VehicleStatus, RoleType } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
@@ -9,25 +10,46 @@ async function main() {
   const company = await prisma.companies.upsert({
     where: { id: 1 },
     update: {},
-    create: { name: 'FleetOps Logistics' },
+    create: { name: 'TransitOps' },
   });
   console.log(`created Company: ${company.name}`);
 
-  //role
-  const role = await prisma.roles.upsert({
-    where: { role: 'Driver' },
-    update: {},
-    create: { role: 'Driver' },
-  });
-  console.log(`created Role: ${role.role}`);
+  // roles
+  const roles = ['ADMIN', 'DRIVER', 'FLEET_MANAGER', 'SAFETY_OFFICER', 'FINANCIAL_ANALYST'] as RoleType[];
+  for (const r of roles) {
+    await prisma.roles.upsert({
+      where: { role: r },
+      update: {},
+      create: { role: r },
+    });
+  }
+  console.log(`created Roles`);
 
-  // user
+  const driverRole = await prisma.roles.findUnique({ where: { role: 'DRIVER' } });
+  const adminRole = await prisma.roles.findUnique({ where: { role: 'ADMIN' } });
+
+  // admin user
+  const adminHash = await bcrypt.hash('admin123', 10);
+  const admin = await prisma.users.upsert({
+    where: { email: 'admin@transitops.com' },
+    update: { password: adminHash },
+    create: {
+      company_id: company.id,
+      role_id: adminRole!.id,
+      name: 'Admin User',
+      email: 'admin@transitops.com',
+      password: adminHash,
+    },
+  });
+  console.log(`created Admin: ${admin.name}`);
+
+  // driver user
   const user = await prisma.users.upsert({
     where: { email: 'alex@fleetops.com' },
     update: {},
     create: {
       company_id: company.id,
-      role_id: role.id,
+      role_id: driverRole!.id,
       name: 'Alex',
       email: 'alex@fleetops.com',
       password: 'password123',
@@ -65,7 +87,7 @@ async function main() {
       status: VehicleStatus.Available,
     },
   });
-  console.log(`created vehicle (Reg No: ${vehicle.reg_no}, Capacity: 500kg)`);
+  console.log(`created vehicle (Reg No: ${vehicle.reg_no})`);
 }
 
 main()
