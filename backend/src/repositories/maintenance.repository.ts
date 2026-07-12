@@ -15,4 +15,25 @@ export class MaintenanceRepository {
     });
     return aggregate._sum.cost || 0;
   }
+
+  async findActiveByRegNo(reg_no: string): Promise<Maintenance | null> {
+    return prisma.maintenance.findFirst({
+      where: {
+        reg_no,
+        status: {
+          not: 'Available', // Assuming anything not 'Available' is active, or we can just fetch the most recent
+        }
+      },
+      orderBy: {
+        date: 'desc'
+      }
+    });
+  }
+
+  async update(id: number, data: Prisma.MaintenanceUncheckedUpdateInput): Promise<Maintenance> {
+    return prisma.maintenance.update({
+      where: { id },
+      data,
+    });
+  }
 }

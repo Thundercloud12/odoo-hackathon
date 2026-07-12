@@ -21,12 +21,14 @@ export default function MaintenancePage() {
 
   // Form State
   const [formData, setFormData] = useState({
+    id: null as number | null,
     reg_no: '',
     service_type: 'Routine_Service',
     cost: '',
     date: new Date().toISOString().split('T')[0],
-    status: 'Active',
+    status: 'Available',
   });
+  const [activeMaintenance, setActiveMaintenance] = useState<any>(null);
 
   useEffect(() => {
     if (!token) return;
@@ -50,9 +52,14 @@ export default function MaintenancePage() {
           throw new Error(data.message || 'Failed to fetch vehicles');
         }
 
-        setVehicles(data.data || []);
-        if (data.data && data.data.length > 0) {
-          setFormData((prev) => ({ ...prev, reg_no: data.data[0].reg_no }));
+        const allVehicles = data.data || [];
+        const filteredVehicles = allVehicles.filter(
+          (v: Vehicle) => v.status === 'Available' || v.status === 'In_Shop' || v.status === 'In Shop'
+        );
+
+        setVehicles(filteredVehicles);
+        if (filteredVehicles.length > 0) {
+          setFormData((prev) => ({ ...prev, reg_no: filteredVehicles[0].reg_no }));
         }
       } catch (err: any) {
         setError(err.message);
@@ -63,6 +70,48 @@ export default function MaintenancePage() {
 
     fetchVehicles();
   }, [token, logout]);
+
+  useEffect(() => {
+    if (!formData.reg_no || !token) return;
+
+    const fetchActiveMaintenance = async () => {
+      const selectedVehicle = vehicles.find((v) => v.reg_no === formData.reg_no);
+      if (selectedVehicle?.status === 'In_Shop' || selectedVehicle?.status === 'In Shop') {
+        try {
+          const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+          const res = await fetch(`${API_URL}/api/v1/maintenances/active/${formData.reg_no}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const data = await res.json();
+          if (res.ok && data.success && data.data) {
+            setActiveMaintenance(data.data);
+            setFormData((prev) => ({
+              ...prev,
+              id: data.data.id,
+              service_type: data.data.service_type,
+              cost: data.data.cost.toString(),
+              date: new Date(data.data.date).toISOString().split('T')[0],
+              status: data.data.status,
+            }));
+          }
+        } catch (err) {
+          console.error('Failed to fetch active maintenance', err);
+        }
+      } else {
+        setActiveMaintenance(null);
+        setFormData((prev) => ({
+          ...prev,
+          id: null,
+          service_type: 'Routine_Service',
+          cost: '',
+          date: new Date().toISOString().split('T')[0],
+          status: 'Available',
+        }));
+      }
+    };
+
+    fetchActiveMaintenance();
+  }, [formData.reg_no, vehicles, token]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -77,58 +126,93 @@ export default function MaintenancePage() {
 
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+      const isCurrentlyInShop = !!activeMaintenance;
 
-      // 1. Post the maintenance record
-      const maintenancePayload = {
-        reg_no: formData.reg_no,
-        service_type: formData.service_type,
-        cost: parseFloat(formData.cost),
-        date: new Date(formData.date).toISOString(),
-        status: formData.status,
-      };
+      if (isCurrentlyInShop) {
+        // Update existing maintenance record to Completed/Available
+        if (formData.status === 'Available') {
+          const res = await fetch(`${API_URL}/api/v1/maintenances/${formData.id}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ status: formData.status }),
+          });
+          if (!res.ok) throw new Error('Failed to update maintenance record');
 
-      const res = await fetch(`${API_URL}/api/v1/maintenances`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(maintenancePayload),
-      });
+          // Update vehicle status to Available
+          const vehicleRes = await fetch(`${API_URL}/api/v1/vehicles/${formData.reg_no}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ status: 'Available' }),
+          });
+          if (!vehicleRes.ok) throw new Error('Failed to update vehicle status');
 
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(data.message || 'Failed to log maintenance record');
+          setSuccessMsg(`Vehicle ${formData.reg_no} is now Available.`);
+          setVehicles((prev) =>
+            prev.map((v) => (v.reg_no === formData.reg_no ? { ...v, status: 'Available' } : v))
+          );
+          setActiveMaintenance(null);
+        } else {
+          throw new Error('Vehicle is already In Shop.');
+        }
+      } else {
+        // Creating a new maintenance record and putting vehicle In Shop
+        if (formData.status === 'In Shop') {
+          const maintenancePayload = {
+            reg_no: formData.reg_no,
+            service_type: formData.service_type,
+            cost: parseFloat(formData.cost),
+            date: new Date(formData.date).toISOString(),
+            status: formData.status,
+          };
+
+          const res = await fetch(`${API_URL}/api/v1/maintenances`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(maintenancePayload),
+          });
+          if (!res.ok) {
+            const data = await res.json();
+            throw new Error(data.message || 'Failed to log maintenance record');
+          }
+
+          // Automatically update vehicle status to "In Shop"
+          const vehicleRes = await fetch(`${API_URL}/api/v1/vehicles/${formData.reg_no}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ status: 'In_Shop' }),
+          });
+          if (!vehicleRes.ok) throw new Error('Failed to update vehicle status');
+
+          setSuccessMsg(`Service record created. Vehicle ${formData.reg_no} is now In Shop.`);
+          setVehicles((prev) =>
+            prev.map((v) => (v.reg_no === formData.reg_no ? { ...v, status: 'In_Shop' } : v))
+          );
+        } else {
+          throw new Error('Please select "In Shop" to log a new maintenance record.');
+        }
       }
 
-      // 2. Automatically update vehicle status to "In Shop"
-      const vehicleRes = await fetch(`${API_URL}/api/v1/vehicles/${formData.reg_no}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ status: 'In_Shop' }),
-      });
-
-      const vehicleData = await vehicleRes.json();
-      if (!vehicleRes.ok || !vehicleData.success) {
-        throw new Error(vehicleData.message || 'Failed to update vehicle status');
+      // Reset form if vehicle is not in shop
+      if (!isCurrentlyInShop || formData.status === 'Available') {
+        setFormData((prev) => ({
+          ...prev,
+          cost: '',
+          date: new Date().toISOString().split('T')[0],
+          status: 'Available',
+        }));
       }
-
-      // Success
-      setSuccessMsg(`Service record created. Vehicle ${formData.reg_no} is now "In Shop".`);
-      setFormData((prev) => ({
-        ...prev,
-        cost: '',
-        date: new Date().toISOString().split('T')[0],
-        status: 'Active',
-      }));
-
-      // Refresh local vehicle statuses
-      setVehicles((prev) =>
-        prev.map((v) => (v.reg_no === formData.reg_no ? { ...v, status: 'In_Shop' } : v))
-      );
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -203,9 +287,10 @@ export default function MaintenancePage() {
                 id="service_type"
                 name="service_type"
                 required
+                disabled={!!activeMaintenance}
                 value={formData.service_type}
                 onChange={handleChange}
-                className="block h-10 w-full rounded-md border border-border bg-black/5 px-3 text-sm text-primary-text focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary"
+                className="block h-10 w-full rounded-md border border-border bg-black/5 px-3 text-sm text-primary-text focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <option value="Routine_Service">Routine Service</option>
                 <option value="Oil_Change">Oil Change</option>
@@ -227,10 +312,11 @@ export default function MaintenancePage() {
                 required
                 min="0.01"
                 step="0.01"
+                disabled={!!activeMaintenance}
                 placeholder="e.g. 2500"
                 value={formData.cost}
                 onChange={handleChange}
-                className="block h-10 w-full rounded-md border border-border bg-black/5 px-3 text-sm text-primary-text focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary"
+                className="block h-10 w-full rounded-md border border-border bg-black/5 px-3 text-sm text-primary-text focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -243,9 +329,10 @@ export default function MaintenancePage() {
                 id="date"
                 name="date"
                 required
+                disabled={!!activeMaintenance}
                 value={formData.date}
                 onChange={handleChange}
-                className="block h-10 w-full rounded-md border border-border bg-black/5 px-3 text-sm text-primary-text focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary"
+                className="block h-10 w-full rounded-md border border-border bg-black/5 px-3 text-sm text-primary-text focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -253,16 +340,17 @@ export default function MaintenancePage() {
               <label htmlFor="status" className="text-sm font-medium text-primary-text">
                 Status
               </label>
-              <input
-                type="text"
+              <select
                 id="status"
                 name="status"
                 required
-                placeholder="e.g. Active"
                 value={formData.status}
                 onChange={handleChange}
                 className="block h-10 w-full rounded-md border border-border bg-black/5 px-3 text-sm text-primary-text focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary"
-              />
+              >
+                <option value="Available">Available</option>
+                <option value="In Shop">In Shop</option>
+              </select>
             </div>
 
             <div className="pt-2">

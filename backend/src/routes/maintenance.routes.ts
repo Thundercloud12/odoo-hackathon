@@ -19,4 +19,16 @@ router.post(
   maintenanceController.recordMaintenance
 );
 
+router.get(
+  '/active/:regNo',
+  roleMiddleware(['ADMIN', 'FLEET_MANAGER']),
+  maintenanceController.getActiveByVehicle
+);
+
+router.patch(
+  '/:id',
+  roleMiddleware(['ADMIN', 'FLEET_MANAGER']),
+  maintenanceController.updateMaintenance
+);
+
 export default router;
