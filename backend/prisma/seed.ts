@@ -326,8 +326,8 @@ async function main() {
       cargo_weight: 400,
       trip_dist: 268,
       trip_status: TripStatus.Completed,
-      created_at: new Date(Date.now() - 86400000 * 2), // 2 days ago
-      start_trip_at: new Date(Date.now() - 86400000 * 2),
+      created_at: new Date(Date.now() - 86400000 * 30 * 4), // 4 months ago
+      start_trip_at: new Date(Date.now() - 86400000 * 30 * 4),
     },
   });
   console.log(`created Trip 1 (ID: ${trip1.id}, Status: ${trip1.trip_status})`);
@@ -342,8 +342,8 @@ async function main() {
       cargo_weight: 18000,
       trip_dist: 148,
       trip_status: TripStatus.Completed,
-      created_at: new Date(Date.now() - 86400000 * 5), // 5 days ago
-      start_trip_at: new Date(Date.now() - 86400000 * 5),
+      created_at: new Date(Date.now() - 86400000 * 30 * 3), // 3 months ago
+      start_trip_at: new Date(Date.now() - 86400000 * 30 * 3),
     },
   });
   console.log(`created Trip 2 (ID: ${trip2.id}, Status: ${trip2.trip_status})`);
@@ -394,6 +394,64 @@ async function main() {
     },
   });
   console.log(`created Trip 5 (ID: ${trip5.id}, Status: ${trip5.trip_status})`);
+
+  // Additional completed trips for monthly analytics variety
+  const trip6 = await prisma.trip.create({
+    data: {
+      reg_no: vehicle1.reg_no,
+      driver_id: driver1.driver_id,
+      src: 'Delhi',
+      dest: 'Agra',
+      cargo_weight: 500,
+      trip_dist: 230,
+      trip_status: TripStatus.Completed,
+      created_at: new Date(Date.now() - 86400000 * 30 * 6), // 6 months ago
+      start_trip_at: new Date(Date.now() - 86400000 * 30 * 6),
+    },
+  });
+
+  const trip7 = await prisma.trip.create({
+    data: {
+      reg_no: vehicle2.reg_no,
+      driver_id: driver4.driver_id,
+      src: 'Mumbai',
+      dest: 'Surat',
+      cargo_weight: 20000,
+      trip_dist: 280,
+      trip_status: TripStatus.Completed,
+      created_at: new Date(Date.now() - 86400000 * 30 * 5), // 5 months ago
+      start_trip_at: new Date(Date.now() - 86400000 * 30 * 5),
+    },
+  });
+
+  const trip8 = await prisma.trip.create({
+    data: {
+      reg_no: vehicle3.reg_no,
+      driver_id: driver3.driver_id,
+      src: 'Bengaluru',
+      dest: 'Mysore',
+      cargo_weight: 12000,
+      trip_dist: 145,
+      trip_status: TripStatus.Completed,
+      created_at: new Date(Date.now() - 86400000 * 30 * 2), // 2 months ago
+      start_trip_at: new Date(Date.now() - 86400000 * 30 * 2),
+    },
+  });
+
+  const trip9 = await prisma.trip.create({
+    data: {
+      reg_no: vehicle1.reg_no,
+      driver_id: driver1.driver_id,
+      src: 'Delhi',
+      dest: 'Chandigarh',
+      cargo_weight: 600,
+      trip_dist: 250,
+      trip_status: TripStatus.Completed,
+      created_at: new Date(Date.now() - 86400000 * 30 * 1), // 1 month ago
+      start_trip_at: new Date(Date.now() - 86400000 * 30 * 1),
+    },
+  });
+  console.log('created extra completed trips for analytics');
 
   // 7. Fuel Logs
   // Fuel Logs for VAN-05

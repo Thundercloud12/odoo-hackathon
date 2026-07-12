@@ -25,6 +25,24 @@ export class AnalyticsRepository {
   }
 
   /**
+   * Get completed trips for a company
+   */
+  async getCompletedTripsForCompany(companyId: number) {
+    return prisma.trip.findMany({
+      where: {
+        vehicle: {
+          company_id: companyId,
+        },
+        trip_status: 'Completed',
+      },
+      select: {
+        created_at: true,
+        trip_dist: true,
+      },
+    });
+  }
+
+  /**
    * Get sum of trip distance and count of trips
    */
   async getTripsSummaryByCompany(companyId: number) {

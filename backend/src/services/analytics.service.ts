@@ -31,6 +31,44 @@ export class AnalyticsService {
     // 4b. Fetch 3 costliest vehicles
     const costliestVehicles = await analyticsRepository.getCostliestVehiclesByCompany(companyId);
 
+    // 4c. Fetch completed trips for monthly revenue
+    const completedTrips = await analyticsRepository.getCompletedTripsForCompany(companyId);
+
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    const monthlyRevenue = [];
+    const now = new Date();
+
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const monthName = months[d.getMonth()];
+      const year = d.getFullYear();
+
+      const tripsInMonth = completedTrips.filter((t) => {
+        const tDate = new Date(t.created_at);
+        return tDate.getMonth() === d.getMonth() && tDate.getFullYear() === d.getFullYear();
+      });
+
+      const revenue = tripsInMonth.reduce((sum, t) => sum + t.trip_dist * REVENUE_RATE_PER_DIST, 0);
+
+      monthlyRevenue.push({
+        month: monthName,
+        revenue: parseFloat(revenue.toFixed(2)),
+      });
+    }
+
     // 5. Perform final analytics calculations
     const fuelEfficiency =
       fuelSummary.totalLitres > 0
@@ -55,6 +93,7 @@ export class AnalyticsService {
       operationalCost,
       vehicleRoi,
       costliestVehicles,
+      monthlyRevenue,
       metadata: {
         totalDistance: tripsSummary.totalDistance,
         totalLitres: fuelSummary.totalLitres,
