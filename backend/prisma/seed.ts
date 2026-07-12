@@ -3,20 +3,68 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  // Clear existing roles before re-seeding
-  await prisma.roles.deleteMany();
+  console.log('seeding db');
 
-  const roles = [
-    { role: 'ADMIN' },
-    { role: 'DRIVER' },
-    { role: 'FLEET_MANAGER' },
-    { role: 'SAFETY_OFFICER' },
-    { role: 'FINANCIAL_ANALYST' },
-  ];
+  // company
+  const company = await prisma.companies.upsert({
+    where: { id: 1 },
+    update: {},
+    create: { name: 'TransitOps Logistics' },
+  });
+  console.log(`created Company: ${company.name}`);
 
-  await prisma.roles.createMany({ data: roles });
+  //role
+  const role = await prisma.roles.upsert({
+    where: { role: 'Driver' },
+    update: {},
+    create: { role: 'Driver' },
+  });
+  console.log(`created Role: ${role.role}`);
 
-  console.log('✅ Roles seeded:', roles.map((r) => r.role).join(', '));
+  // user
+  const user = await prisma.users.upsert({
+    where: { email: 'alex@transitops.com' },
+    update: {},
+    create: {
+      company_id: company.id,
+      role_id: role.id,
+      name: 'Alex',
+      email: 'alex@transitops.com',
+      password: 'password123',
+    },
+  });
+  console.log(`created User: ${user.name}`);
+
+  // driver
+  const driver = await prisma.driver.upsert({
+    where: { driver_id: user.id },
+    update: {},
+    create: {
+      license_no: 'DL-123456789',
+      driver_id: user.id,
+      status: 'Available',
+      safety_score: 98.5,
+      license_type: 'Commercial',
+      expiry_date: new Date('2029-12-31'),
+    },
+  });
+  console.log(`created Driver (ID: ${driver.driver_id})`);
+
+  // vehicle
+  const vehicle = await prisma.vehicles.upsert({
+    where: { reg_no: 'VAN-05' },
+    update: { status: 'Available' },
+    create: {
+      reg_no: 'VAN-05',
+      vehicle_model: 'Ford Transit',
+      type: 'Van',
+      load_capacity: 500,
+      odometer_reading: 15000,
+      cost: 45000,
+      status: 'Available',
+    },
+  });
+  console.log(`created vehicle (Reg No: ${vehicle.reg_no}, Capacity: 500kg)`);
 }
 
 main()
