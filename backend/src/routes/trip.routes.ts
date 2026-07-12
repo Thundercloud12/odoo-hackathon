@@ -4,10 +4,12 @@ import {
   getTripById,
   createTrip,
   updateTripStatus,
+  getRecentTrips,
 } from '../controllers/trip.controller.js';
 
 const router: ExpressRouter = Router();
 
+router.get('/recent/:companyId', getRecentTrips);
 router.get('/', getTrips);
 router.get('/:id', getTripById);
 router.post('/', createTrip);
