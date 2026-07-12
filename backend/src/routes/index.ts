@@ -9,6 +9,7 @@ import companyRoutes from './company.routes.js';
 import fuelRoutes from './fuel.routes.js';
 import expenseRoutes from './expense.routes.js';
 import maintenanceRoutes from './maintenance.routes.js';
+import analyticsRoutes from './analytics.routes.js';
 
 const router: ExpressRouter = Router();
 
@@ -22,5 +23,6 @@ router.use('/drivers', driverRoutes);
 router.use('/fuel', fuelRoutes);
 router.use('/expenses', expenseRoutes);
 router.use('/maintenances', maintenanceRoutes);
+router.use('/analytics', analyticsRoutes);
 
 export default router;
