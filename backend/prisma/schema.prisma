@@ -31,10 +31,13 @@ model Companies {
   id    Int     @id @default(autoincrement())
   name  String
   users Users[]
+  vehicles Vehicles[]
 }
 
 model Vehicles {
-  reg_no           String        @id
+  company_id       Int
+  company          Companies   @relation(fields: [company_id], references: [id])
+  reg_no           String      @id
   vehicle_model    String
   type             String
   load_capacity    Float
@@ -44,6 +47,17 @@ model Vehicles {
   trips            Trip[]
   fuel_logs        Fuel_Logs[]
   expenses         Expenses[]
+  maintenances     Maintenance[]
+}
+
+model Maintenance {
+  id         Int            @id @default(autoincrement())
+  reg_no     String
+  vehicle    Vehicles       @relation(fields: [reg_no], references: [reg_no])
+  service_type ServiceType
+  cost       Float
+  date       DateTime
+  status     String
 }
 
 model Driver {
@@ -110,4 +124,14 @@ enum TripStatus {
   Dispatched
   Completed
   Cancelled
+
+}
+
+enum ServiceType {
+  Routine_Service
+  Oil_Change
+  Tire_Replacement
+  Brake_Service
+  Engine_Repair
+  Other
 }
