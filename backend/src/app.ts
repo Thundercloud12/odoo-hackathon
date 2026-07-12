@@ -2,8 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { errorMiddleware } from './middleware/error.middleware.js';
 import { logger } from './utils/logger.js';
-import authRoutes from './routes/auth.routes.js';
-import companyRoutes from './routes/company.routes.js';
+import routes from './routes/index.js';
 
 const app: express.Application = express();
 
@@ -11,9 +10,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/company', companyRoutes);
+// Register routes
+app.use('/api/v1', routes);
 
 app.get('/health', (req, res) => {
   res.status(200).json({ success: true, message: 'Server is healthy' });
