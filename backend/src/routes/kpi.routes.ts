@@ -1,7 +1,7 @@
-import { Router } from 'express';
+import { Router, type Router as ExpressRouter } from 'express';
 import { getKpiHandler } from '../controllers/kpi.controller.js';
 
-const router = Router();
+const router: ExpressRouter = Router();
 
 /**
  * GET /api/v1/kpi

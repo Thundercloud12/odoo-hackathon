@@ -8,13 +8,13 @@ datasource db {
 }
 
 model Users {
-  id         Int        @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   company_id Int
-  company    Companies  @relation(fields: [company_id], references: [id])
+  company    Companies @relation(fields: [company_id], references: [id])
   role_id    Int
-  role       Roles      @relation(fields: [role_id], references: [id])
+  role       Roles     @relation(fields: [role_id], references: [id])
   name       String
-  email      String     @unique
+  email      String    @unique
   password   String
   password_reset_token   String?
   password_reset_expires DateTime?
@@ -34,7 +34,7 @@ model Companies {
 }
 
 model Vehicles {
-  reg_no           String      @id
+  reg_no           String        @id
   vehicle_model    String
   type             String
   load_capacity    Float
@@ -47,9 +47,9 @@ model Vehicles {
 }
 
 model Driver {
-  license_no   String   @id
-  driver_id    Int      @unique
-  user         Users    @relation(fields: [driver_id], references: [id])
+  license_no   String       @id
+  driver_id    Int          @unique
+  user         Users        @relation(fields: [driver_id], references: [id])
   status       DriverStatus
   safety_score Float
   license_type String
@@ -105,12 +105,9 @@ enum DriverStatus {
   Suspended
 }
 
-
-enum TripStatus{
-
+enum TripStatus {
   Draft
   Dispatched
   Completed
   Cancelled
-
 }
