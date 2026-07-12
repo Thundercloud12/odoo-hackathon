@@ -51,6 +51,7 @@ export const authService = {
         name: user.name,
         email: user.email,
         role: user.role.role,
+        companyId: company.id,
       },
     };
   },
@@ -79,6 +80,7 @@ export const authService = {
         name: user.name,
         email: user.email,
         role: user.role.role,
+        companyId: user.company_id,
       },
     };
   },
