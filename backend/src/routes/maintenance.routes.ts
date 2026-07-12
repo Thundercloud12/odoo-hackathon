@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { MaintenanceController } from '../controllers/maintenance.controller.js';
 import { authMiddleware } from '../middleware/auth.middleware.js';
-import { permissionMiddleware } from '../middleware/authorize.middleware.js';
+import { permissionMiddleware, roleMiddleware } from '../middleware/authorize.middleware.js';
 import { validate } from '../middleware/validate.middleware.js';
 import { maintenanceSchema } from '../schemas/maintenance.schema.js';
 
