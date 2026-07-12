@@ -53,7 +53,7 @@ export function Sidebar() {
             >
               <item.icon
                 className={clsx(
-                  "mr-3 h-5 w-5 flex-shrink-0 transition-colors",
+                  "mr-3 h-5 w-5 shrink-0 transition-colors",
                   isActive ? "text-primary" : "text-secondary-text group-hover:text-primary-text"
                 )}
                 aria-hidden="true"
