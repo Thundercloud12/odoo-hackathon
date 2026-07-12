@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Hexagon, ChevronDown, AlertCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function LoginForm() {
   const router = useRouter();
@@ -12,6 +13,7 @@ export function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("ADMIN");
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,16 +32,13 @@ export function LoginForm() {
 
       const data = await response.json();
 
-      if (!response.ok) {
+      if (!response.ok || !data.success) {
         throw new Error(data.message || "Invalid credentials. Please try again.");
       }
 
-      // Store the token (you can also use cookies if you set up next.js middleware later)
-      localStorage.setItem("token", data.data.token);
-      localStorage.setItem("user", JSON.stringify(data.data.user));
-
-      // Redirect based on role or to a unified dashboard
-      router.push("/dashboard");
+      // Successful login
+      login(data.data.user, data.data.token);
+      router.push("/fleet");
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred. Please try again.");
     } finally {
