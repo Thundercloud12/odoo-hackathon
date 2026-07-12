@@ -3,24 +3,20 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
+  // Clear existing roles before re-seeding
+  await prisma.roles.deleteMany();
+
   const roles = [
     { role: 'ADMIN' },
-    { role: 'USER' },
-    { role: 'MODERATOR' },
-    { role: 'SUPER_ADMIN' },
+    { role: 'DRIVER' },
+    { role: 'FLEET_MANAGER' },
+    { role: 'SAFETY_OFFICER' },
+    { role: 'FINANCIAL_ANALYST' },
   ];
 
-  for (const r of roles) {
-    await prisma.roles.upsert({
-      where: {
-        role: r.role,
-      },
-      update: {},
-      create: r,
-    });
-  }
+  await prisma.roles.createMany({ data: roles });
 
-  console.log('✅ Roles seeded');
+  console.log('✅ Roles seeded:', roles.map((r) => r.role).join(', '));
 }
 
 main()
