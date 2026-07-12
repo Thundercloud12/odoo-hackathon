@@ -8,18 +8,26 @@ datasource db {
 }
 
 model Users {
-  id       Int     @id @default(autoincrement())
-  role_id  Int
-  role     Roles   @relation(fields: [role_id], references: [id])
-  name     String
-  email    String  @unique
-  password String
-  driver   Driver?
+  id         Int        @id @default(autoincrement())
+  company_id Int
+  company    Companies  @relation(fields: [company_id], references: [id])
+  role_id    Int
+  role       Roles      @relation(fields: [role_id], references: [id])
+  name       String
+  email      String     @unique
+  password   String
+  driver     Driver?
 }
 
 model Roles {
   id    Int     @id @default(autoincrement())
   role  String  @unique
+  users Users[]
+}
+
+model Companies {
+  id    Int     @id @default(autoincrement())
+  name  String
   users Users[]
 }
 
