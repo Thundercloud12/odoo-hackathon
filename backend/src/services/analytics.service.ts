@@ -28,6 +28,9 @@ export class AnalyticsService {
     // 4. Fetch maintenance summary
     const maintenanceSummary = await analyticsRepository.getMaintenanceSummaryByCompany(companyId);
 
+    // 4b. Fetch 3 costliest vehicles
+    const costliestVehicles = await analyticsRepository.getCostliestVehiclesByCompany(companyId);
+
     // 5. Perform final analytics calculations
     const fuelEfficiency =
       fuelSummary.totalLitres > 0
@@ -51,6 +54,7 @@ export class AnalyticsService {
       fleetUtilization,
       operationalCost,
       vehicleRoi,
+      costliestVehicles,
       metadata: {
         totalDistance: tripsSummary.totalDistance,
         totalLitres: fuelSummary.totalLitres,

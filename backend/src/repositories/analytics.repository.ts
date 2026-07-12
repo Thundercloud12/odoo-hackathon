@@ -12,6 +12,19 @@ export class AnalyticsRepository {
   }
 
   /**
+   * Get 3 costliest vehicles for a company
+   */
+  async getCostliestVehiclesByCompany(companyId: number) {
+    return prisma.vehicles.findMany({
+      where: { company_id: companyId },
+      orderBy: {
+        cost: 'desc',
+      },
+      take: 3,
+    });
+  }
+
+  /**
    * Get sum of trip distance and count of trips
    */
   async getTripsSummaryByCompany(companyId: number) {
