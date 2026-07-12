@@ -59,9 +59,14 @@ export function LiveBoard({ trips, onStatusUpdate, selectedTripId, onSelectTrip 
                 {/* Status Update Action Buttons */}
                 <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex gap-1">
                   {trip.status === 'Draft' && (
-                    <button onClick={() => onStatusUpdate(trip.id, 'Dispatched')} className="p-1 hover:bg-blue-100 text-blue-600 rounded-md transition-colors" title="Dispatch Trip">
-                      <Play className="w-4 h-4" />
-                    </button>
+                    <>
+                      <button onClick={() => onStatusUpdate(trip.id, 'Dispatched')} className="p-1 hover:bg-blue-100 text-blue-600 rounded-md transition-colors" title="Dispatch Trip">
+                        <Play className="w-4 h-4" />
+                      </button>
+                      <button onClick={() => onStatusUpdate(trip.id, 'Cancelled')} className="p-1 hover:bg-red-100 text-red-600 rounded-md transition-colors" title="Cancel Trip">
+                        <XCircle className="w-4 h-4" />
+                      </button>
+                    </>
                   )}
                   {trip.status === 'Dispatched' && (
                     <>

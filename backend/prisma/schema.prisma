@@ -74,9 +74,11 @@ model Driver {
   user         Users        @relation(fields: [driver_id], references: [id])
   status       DriverStatus
   safety_score Float
-  license_type String
-  expiry_date  DateTime
-  trips        Trip[]
+  license_type         String
+  expiry_date          DateTime
+  contact_number       String       @default("")
+  trip_completion_rate Float        @default(0)
+  trips                Trip[]
 }
 
 model Trip {
