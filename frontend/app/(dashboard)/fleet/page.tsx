@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
 import { VehicleTable, Vehicle } from "@/components/vehicles/VehicleTable";
+import { AddVehicleForm } from "@/components/vehicles/AddVehicleForm";
+import { Modal } from "@/components/ui/Modal";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function FleetPage() {
@@ -10,6 +12,7 @@ export default function FleetPage() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   
   // Filters
   const [typeFilter, setTypeFilter] = useState("All");
@@ -125,7 +128,10 @@ export default function FleetPage() {
           </div>
         </div>
 
-        <button className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors">
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors"
+        >
           <Plus className="mr-2 h-4 w-4" />
           Add Vehicle
         </button>
@@ -146,6 +152,20 @@ export default function FleetPage() {
       ) : (
         <VehicleTable vehicles={filteredVehicles} />
       )}
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Add New Vehicle"
+      >
+        <AddVehicleForm
+          onCancel={() => setIsModalOpen(false)}
+          onSuccess={(newVehicle) => {
+            setVehicles((prev) => [...prev, newVehicle]);
+            setIsModalOpen(false);
+          }}
+        />
+      </Modal>
     </div>
   );
 }

@@ -70,7 +70,7 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
               </thead>
               <tbody className="divide-y divide-border bg-surface">
                 {vehicles.map((vehicle) => (
-                  <tr key={vehicle.reg_no} className="hover:bg-black/[0.02] transition-colors">
+                  <tr key={vehicle.reg_no} className="hover:bg-black/2 transition-colors">
                     <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-primary-text sm:pl-6">
                       {vehicle.reg_no}
                     </td>
@@ -113,7 +113,7 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
           </div>
         </div>
       </div>
-      
+
       <div className="mt-4 flex items-center justify-between text-xs text-primary font-medium">
         <p>Rule: Registration No. must be unique • Retired/In Shop vehicles are hidden from Trip Dispatcher</p>
       </div>
