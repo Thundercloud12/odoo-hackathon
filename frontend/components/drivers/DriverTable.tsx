@@ -3,38 +3,44 @@
 import React from "react";
 import clsx from "clsx";
 
-export interface Vehicle {
-  reg_no: string;
-  vehicle_model: string;
-  type: string;
-  load_capacity: number;
-  odometer_reading: number;
-  cost: number;
-  status: "Available" | "On Trip" | "In Shop" | "Retired";
+export interface Driver {
+  license_no: string;
+  driver_id: number;
+  status: "Available" | "On Trip" | "Off Duty" | "Suspended";
+  safety_score: number;
+  license_type: string;
+  expiry_date: string;
+  contact_number: string;
+  trip_completion_rate: number;
+  user?: {
+    name: string;
+    email: string;
+  };
 }
 
-interface VehicleTableProps {
-  vehicles: Vehicle[];
+interface DriverTableProps {
+  drivers: Driver[];
 }
 
-export function VehicleTable({ vehicles }: VehicleTableProps) {
-  const getStatusBadge = (status: Vehicle["status"]) => {
+export function DriverTable({ drivers }: DriverTableProps) {
+  const getStatusBadge = (status: string) => {
     switch (status) {
       case "Available":
         return "bg-green-100 text-green-700 border-green-200";
       case "On Trip":
         return "bg-blue-100 text-blue-700 border-blue-200";
-      case "In Shop":
+      case "Off Duty":
+        return "bg-gray-100 text-gray-700 border-gray-200";
+      case "Suspended":
         return "bg-orange-100 text-orange-700 border-orange-200";
-      case "Retired":
-        return "bg-red-100 text-red-700 border-red-200";
       default:
         return "bg-gray-100 text-gray-700 border-gray-200";
     }
   };
 
-  const formatNumber = (num: number) => {
-    return new Intl.NumberFormat("en-US").format(num);
+  const formatDate = (dateStr: string) => {
+    const d = new Date(dateStr);
+    return `${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
   };
 
   return (
@@ -46,22 +52,25 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
               <thead className="bg-black/5">
                 <tr>
                   <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-xs font-medium uppercase tracking-wider text-secondary-text sm:pl-6">
-                    Reg. No. (Unique)
+                    Driver
                   </th>
                   <th scope="col" className="px-3 py-3.5 text-left text-xs font-medium uppercase tracking-wider text-secondary-text">
-                    Name/Model
+                    License No
                   </th>
                   <th scope="col" className="px-3 py-3.5 text-left text-xs font-medium uppercase tracking-wider text-secondary-text">
-                    Type
+                    Category
                   </th>
                   <th scope="col" className="px-3 py-3.5 text-left text-xs font-medium uppercase tracking-wider text-secondary-text">
-                    Capacity
+                    Expiry
                   </th>
                   <th scope="col" className="px-3 py-3.5 text-left text-xs font-medium uppercase tracking-wider text-secondary-text">
-                    Odometer
+                    Contact
                   </th>
                   <th scope="col" className="px-3 py-3.5 text-left text-xs font-medium uppercase tracking-wider text-secondary-text">
-                    Acq. Cost
+                    Trip Compl.
+                  </th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-xs font-medium uppercase tracking-wider text-secondary-text">
+                    Safety
                   </th>
                   <th scope="col" className="px-3 py-3.5 text-left text-xs font-medium uppercase tracking-wider text-secondary-text">
                     Status
@@ -69,42 +78,45 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border bg-surface">
-                {vehicles.map((vehicle) => (
-                  <tr key={vehicle.reg_no} className="hover:bg-black/2 transition-colors">
+                {drivers.map((driver) => (
+                  <tr key={driver.license_no} className="hover:bg-black/2 transition-colors">
                     <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-primary-text sm:pl-6">
-                      {vehicle.reg_no}
+                      {driver.user?.name || "Unknown"}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-secondary-text">
-                      {vehicle.vehicle_model}
+                      {driver.license_no}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-secondary-text">
-                      {vehicle.type}
+                      {driver.license_type}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-secondary-text">
-                      {formatNumber(vehicle.load_capacity)} kg
+                      {formatDate(driver.expiry_date)}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-secondary-text">
-                      {formatNumber(vehicle.odometer_reading)}
+                      {driver.contact_number}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-secondary-text">
-                      {formatNumber(vehicle.cost)}
+                      {driver.trip_completion_rate}%
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-secondary-text font-medium">
+                      {driver.safety_score}%
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm">
                       <span
                         className={clsx(
                           "inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-medium",
-                          getStatusBadge(vehicle.status)
+                          getStatusBadge(driver.status)
                         )}
                       >
-                        {vehicle.status}
+                        {driver.status}
                       </span>
                     </td>
                   </tr>
                 ))}
-                {vehicles.length === 0 && (
+                {drivers.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="py-12 text-center text-sm text-secondary-text">
-                      No vehicles found.
+                    <td colSpan={8} className="py-12 text-center text-sm text-secondary-text">
+                      No drivers found.
                     </td>
                   </tr>
                 )}

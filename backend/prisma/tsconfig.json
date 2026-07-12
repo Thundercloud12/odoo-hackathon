@@ -3,5 +3,6 @@
   "compilerOptions": {
     "rootDir": "."
   },
+  "exclude": [],
   "include": ["seed.ts"]
 }
