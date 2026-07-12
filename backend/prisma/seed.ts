@@ -70,15 +70,15 @@ async function main() {
   });
   console.log(`created/fetched Admin: ${adminUser.name}`);
 
-  // Fleet Manager user (Raven K.)
+  // Fleet Manager user
   const managerUser = await prisma.users.upsert({
-    where: { email: 'raven@transitops.com' },
+    where: { email: 'manager@transitops.com' },
     update: { password: passwordHash },
     create: {
       company_id: company.id,
       role_id: fleetManagerRole!.id,
-      name: 'Raven K.',
-      email: 'raven@transitops.com',
+      name: 'Fleet Manager',
+      email: 'manager@transitops.com',
       password: passwordHash,
     },
   });
@@ -140,33 +140,19 @@ async function main() {
   });
   console.log(`created/fetched Driver User 2: ${driverUser2.name}`);
 
-  // Driver User 3 (Priya)
+  // Driver User 3 (Jane Smith)
   const driverUser3 = await prisma.users.upsert({
-    where: { email: 'priya@fleetops.com' },
+    where: { email: 'jane@fleetops.com' },
     update: { password: passwordHash },
     create: {
       company_id: company.id,
       role_id: driverRole!.id,
-      name: 'Priya',
-      email: 'priya@fleetops.com',
+      name: 'Jane Smith',
+      email: 'jane@fleetops.com',
       password: passwordHash,
     },
   });
   console.log(`created/fetched Driver User 3: ${driverUser3.name}`);
-
-  // Driver User 4 (Suresh)
-  const driverUser4 = await prisma.users.upsert({
-    where: { email: 'suresh@fleetops.com' },
-    update: { password: passwordHash },
-    create: {
-      company_id: company.id,
-      role_id: driverRole!.id,
-      name: 'Suresh',
-      email: 'suresh@fleetops.com',
-      password: passwordHash,
-    },
-  });
-  console.log(`created/fetched Driver User 4: ${driverUser4.name}`);
 
   // 4. Drivers
   // Alex (Available)
@@ -178,57 +164,41 @@ async function main() {
       driver_id: driverUser1.id,
       status: DriverStatus.Available,
       safety_score: 98.5,
-      license_type: 'LMV',
-      expiry_date: new Date('2028-12-31'),
+      license_type: 'Commercial',
+      expiry_date: new Date('2029-12-31'),
     },
   });
   console.log(`created/fetched Driver 1 (ID: ${driver1.driver_id})`);
 
-  // John (Suspended)
+  // John Doe (Available)
   const driver2 = await prisma.driver.upsert({
     where: { driver_id: driverUser2.id },
-    update: { status: DriverStatus.Suspended },
+    update: { status: DriverStatus.Available },
     create: {
-      license_no: 'DL-44120',
+      license_no: 'DL-987654321',
       driver_id: driverUser2.id,
-      status: DriverStatus.Suspended,
-      safety_score: 65.0,
-      license_type: 'HMV',
-      expiry_date: new Date('2025-03-15'),
+      status: DriverStatus.Available,
+      safety_score: 92.0,
+      license_type: 'Commercial Class A',
+      expiry_date: new Date('2028-06-15'),
     },
   });
   console.log(`created/fetched Driver 2 (ID: ${driver2.driver_id})`);
 
-  // Priya (On_Trip)
+  // Jane Smith (On_Trip)
   const driver3 = await prisma.driver.upsert({
     where: { driver_id: driverUser3.id },
     update: { status: DriverStatus.On_Trip },
     create: {
-      license_no: 'DL-77031',
+      license_no: 'DL-555555555',
       driver_id: driverUser3.id,
       status: DriverStatus.On_Trip,
       safety_score: 96.2,
-      license_type: 'LMV',
-      expiry_date: new Date('2026-08-01'),
+      license_type: 'Commercial Class B',
+      expiry_date: new Date('2030-01-01'),
     },
   });
   console.log(`created/fetched Driver 3 (ID: ${driver3.driver_id})`);
-
-  // Suresh (Off_Duty)
-  const driver4 = await prisma.driver.upsert({
-    where: { driver_id: driverUser4.id },
-    update: { status: DriverStatus.Off_Duty },
-    create: {
-      license_no: 'DL-90045',
-      driver_id: driverUser4.id,
-      status: DriverStatus.Off_Duty,
-      safety_score: 92.0,
-      license_type: 'HMV',
-      expiry_date: new Date('2027-01-15'),
-    },
-  });
-  console.log(`created/fetched Driver 4 (ID: ${driver4.driver_id})`);
-
   // 5. Vehicles
   // VAN-05 (Available)
   const vehicle1 = await prisma.vehicles.upsert({
@@ -413,7 +383,7 @@ async function main() {
   const trip7 = await prisma.trip.create({
     data: {
       reg_no: vehicle2.reg_no,
-      driver_id: driver4.driver_id,
+      driver_id: driver2.driver_id,
       src: 'Mumbai',
       dest: 'Surat',
       cargo_weight: 20000,

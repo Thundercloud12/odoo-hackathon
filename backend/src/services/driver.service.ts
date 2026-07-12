@@ -7,7 +7,7 @@ import type { Prisma, Driver } from '@prisma/client';
 const driverRepository = new DriverRepository();
 
 export class DriverService {
-  async findAllDrivers(): Promise<Driver[]> {
+  async findAllDrivers(): Promise<any[]> {
     return driverRepository.findAll();
   }
 
@@ -55,7 +55,7 @@ export class DriverService {
           safety_score: data.safety_score,
           license_type: data.license_type,
           expiry_date: new Date(data.expiry_date),
-          contact_number: data.contact_number || "",
+          contact_number: data.contact_number || '',
           trip_completion_rate: data.trip_completion_rate || 0,
         },
         include: { user: true },
