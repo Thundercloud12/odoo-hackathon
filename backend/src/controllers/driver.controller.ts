@@ -33,7 +33,10 @@ export class DriverController {
 
   async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const driver = await driverService.createDriver(req.body);
+      const companyId = req.user?.companyId;
+      if (!companyId) throw new Error('Unauthorized');
+      
+      const driver = await driverService.createDriver(req.body, companyId);
       res.status(201).json({
         success: true,
         message: 'Driver created successfully',

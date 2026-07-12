@@ -70,15 +70,15 @@ async function main() {
   });
   console.log(`created/fetched Admin: ${adminUser.name}`);
 
-  // Fleet Manager user
+  // Fleet Manager user (Raven K.)
   const managerUser = await prisma.users.upsert({
-    where: { email: 'manager@transitops.com' },
+    where: { email: 'raven@transitops.com' },
     update: { password: passwordHash },
     create: {
       company_id: company.id,
       role_id: fleetManagerRole!.id,
-      name: 'Fleet Manager',
-      email: 'manager@transitops.com',
+      name: 'Raven K.',
+      email: 'raven@transitops.com',
       password: passwordHash,
     },
   });
@@ -140,19 +140,33 @@ async function main() {
   });
   console.log(`created/fetched Driver User 2: ${driverUser2.name}`);
 
-  // Driver User 3 (Jane Smith)
+  // Driver User 3 (Priya)
   const driverUser3 = await prisma.users.upsert({
-    where: { email: 'jane@fleetops.com' },
+    where: { email: 'priya@fleetops.com' },
     update: { password: passwordHash },
     create: {
       company_id: company.id,
       role_id: driverRole!.id,
-      name: 'Jane Smith',
-      email: 'jane@fleetops.com',
+      name: 'Priya',
+      email: 'priya@fleetops.com',
       password: passwordHash,
     },
   });
   console.log(`created/fetched Driver User 3: ${driverUser3.name}`);
+
+  // Driver User 4 (Suresh)
+  const driverUser4 = await prisma.users.upsert({
+    where: { email: 'suresh@fleetops.com' },
+    update: { password: passwordHash },
+    create: {
+      company_id: company.id,
+      role_id: driverRole!.id,
+      name: 'Suresh',
+      email: 'suresh@fleetops.com',
+      password: passwordHash,
+    },
+  });
+  console.log(`created/fetched Driver User 4: ${driverUser4.name}`);
 
   // 4. Drivers
   // Alex (Available)
@@ -160,45 +174,68 @@ async function main() {
     where: { driver_id: driverUser1.id },
     update: { status: DriverStatus.Available },
     create: {
-      license_no: 'DL-123456789',
+      license_no: 'DL-88213',
       driver_id: driverUser1.id,
       status: DriverStatus.Available,
       safety_score: 98.5,
-      license_type: 'Commercial',
-      expiry_date: new Date('2029-12-31'),
+      license_type: 'LMV',
+      expiry_date: new Date('2028-12-31'),
+      contact_number: '98765xxxxx',
+      trip_completion_rate: 96,
     },
   });
   console.log(`created/fetched Driver 1 (ID: ${driver1.driver_id})`);
 
-  // John Doe (Available)
+  // John (Suspended)
   const driver2 = await prisma.driver.upsert({
     where: { driver_id: driverUser2.id },
-    update: { status: DriverStatus.Available },
+    update: { status: DriverStatus.Suspended },
     create: {
-      license_no: 'DL-987654321',
+      license_no: 'DL-44120',
       driver_id: driverUser2.id,
-      status: DriverStatus.Available,
-      safety_score: 92.0,
-      license_type: 'Commercial Class A',
-      expiry_date: new Date('2028-06-15'),
+      status: DriverStatus.Suspended,
+      safety_score: 65.0,
+      license_type: 'HMV',
+      expiry_date: new Date('2025-03-15'),
+      contact_number: '98220xxxxx',
+      trip_completion_rate: 81,
     },
   });
   console.log(`created/fetched Driver 2 (ID: ${driver2.driver_id})`);
 
-  // Jane Smith (On_Trip)
+  // Priya (On_Trip)
   const driver3 = await prisma.driver.upsert({
     where: { driver_id: driverUser3.id },
     update: { status: DriverStatus.On_Trip },
     create: {
-      license_no: 'DL-555555555',
+      license_no: 'DL-77031',
       driver_id: driverUser3.id,
       status: DriverStatus.On_Trip,
       safety_score: 96.2,
-      license_type: 'Commercial Class B',
-      expiry_date: new Date('2030-01-01'),
+      license_type: 'LMV',
+      expiry_date: new Date('2026-08-01'),
+      contact_number: '99110xxxxx',
+      trip_completion_rate: 99,
     },
   });
   console.log(`created/fetched Driver 3 (ID: ${driver3.driver_id})`);
+
+  // Suresh (Off_Duty)
+  const driver4 = await prisma.driver.upsert({
+    where: { driver_id: driverUser4.id },
+    update: { status: DriverStatus.Off_Duty },
+    create: {
+      license_no: 'DL-90045',
+      driver_id: driverUser4.id,
+      status: DriverStatus.Off_Duty,
+      safety_score: 92.0,
+      license_type: 'HMV',
+      expiry_date: new Date('2027-01-15'),
+      contact_number: '97440xxxxx',
+      trip_completion_rate: 88,
+    },
+  });
+  console.log(`created/fetched Driver 4 (ID: ${driver4.driver_id})`);
 
   // 5. Vehicles
   // VAN-05 (Available)
