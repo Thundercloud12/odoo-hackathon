@@ -19,7 +19,7 @@ export class DriverController {
 
   async getOne(req: Request, res: Response, next: NextFunction) {
     try {
-      const driverId = parseInt((req.params.driverId as string), 10);
+      const driverId = parseInt(req.params.driverId as string, 10);
       const driver = await driverService.findDriverById(driverId);
       res.status(200).json({
         success: true,
@@ -46,7 +46,7 @@ export class DriverController {
 
   async update(req: Request, res: Response, next: NextFunction) {
     try {
-      const driverId = parseInt((req.params.driverId as string), 10);
+      const driverId = parseInt(req.params.driverId as string, 10);
       const driver = await driverService.updateDriver(driverId, req.body);
       res.status(200).json({
         success: true,
@@ -60,7 +60,7 @@ export class DriverController {
 
   async remove(req: Request, res: Response, next: NextFunction) {
     try {
-      const driverId = parseInt((req.params.driverId as string), 10);
+      const driverId = parseInt(req.params.driverId as string, 10);
       await driverService.deleteDriver(driverId);
       res.status(204).send();
     } catch (error) {

@@ -19,10 +19,6 @@ router.post(
 );
 
 // GET /api/company/users — ADMIN, FLEET_MANAGER
-router.get(
-  '/users',
-  roleMiddleware(['ADMIN', 'FLEET_MANAGER']),
-  companyController.listUsers
-);
+router.get('/users', roleMiddleware(['ADMIN', 'FLEET_MANAGER']), companyController.listUsers);
 
 export default router;

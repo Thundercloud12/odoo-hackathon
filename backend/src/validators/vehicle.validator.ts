@@ -9,8 +9,8 @@ export const CreateVehicleSchema = z.object({
     load_capacity: z.number().positive(),
     odometer_reading: z.number().nonnegative(),
     cost: z.number().nonnegative(),
-    status: z.nativeEnum(VehicleStatus)
-  })
+    status: z.nativeEnum(VehicleStatus),
+  }),
 });
 
 export const UpdateVehicleSchema = z.object({
@@ -20,9 +20,9 @@ export const UpdateVehicleSchema = z.object({
     load_capacity: z.number().positive().optional(),
     odometer_reading: z.number().nonnegative().optional(),
     cost: z.number().nonnegative().optional(),
-    status: z.nativeEnum(VehicleStatus).optional()
+    status: z.nativeEnum(VehicleStatus).optional(),
   }),
   params: z.object({
-    regNo: z.string()
-  })
+    regNo: z.string(),
+  }),
 });
