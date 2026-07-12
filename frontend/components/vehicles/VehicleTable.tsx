@@ -113,6 +113,10 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
           </div>
         </div>
       </div>
+
+      <div className="mt-4 flex items-center justify-between text-xs text-primary font-medium">
+        <p>Rule: Registration No. must be unique • Retired/In Shop vehicles are hidden from Trip Dispatcher</p>
+      </div>
     </div>
   );
 }
