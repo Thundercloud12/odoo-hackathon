@@ -48,7 +48,7 @@ model Driver {
   license_no   String   @id
   driver_id    Int      @unique
   user         Users    @relation(fields: [driver_id], references: [id])
-  status       String
+  status       DriverStatus
   safety_score Float
   license_type String
   expiry_date  DateTime
@@ -65,7 +65,7 @@ model Trip {
   dest         String
   cargo_weight Float
   trip_dist    Float
-  trip_status  String
+  trip_status  TripStatus
   expenses     Expenses[]
 }
 
@@ -96,3 +96,19 @@ enum VehicleStatus {
   Retired
 }
 
+enum DriverStatus {
+  Available
+  On_Trip   @map("On Trip")
+  Off_Duty  @map("Off Duty")
+  Suspended
+}
+
+
+enum TripStatus{
+
+  Draft
+  Dispatched
+  Completed
+  Cancelled
+
+}
