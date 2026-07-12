@@ -72,17 +72,19 @@ model Driver {
 }
 
 model Trip {
-  id           Int        @id @default(autoincrement())
-  reg_no       String
-  vehicle      Vehicles   @relation(fields: [reg_no], references: [reg_no])
-  driver_id    Int
-  driver       Driver     @relation(fields: [driver_id], references: [driver_id])
-  src          String
-  dest         String
-  cargo_weight Float
-  trip_dist    Float
-  trip_status  TripStatus
-  expenses     Expenses[]
+  id              Int        @id @default(autoincrement())
+  reg_no          String
+  vehicle         Vehicles   @relation(fields: [reg_no], references: [reg_no])
+  driver_id       Int
+  driver          Driver     @relation(fields: [driver_id], references: [driver_id])
+  src             String
+  dest            String
+  cargo_weight    Float
+  trip_dist       Float
+  trip_status     TripStatus
+  created_at      DateTime   @default(now())
+  start_trip_at   DateTime?
+  expenses        Expenses[]
 }
 
 model Fuel_Logs {

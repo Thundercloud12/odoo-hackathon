@@ -1,6 +1,10 @@
 import type { Request, Response, NextFunction } from 'express';
 import { prisma } from '../config/prisma.js';
 
+import { TripRepository } from '../repositories/trip.repository.js';
+
+const tripRepository = new TripRepository();
+
 export const getTrips = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const trips = await prisma.trip.findMany({
@@ -11,6 +15,29 @@ export const getTrips = async (req: Request, res: Response, next: NextFunction) 
       orderBy: { id: 'desc' },
     });
     res.status(200).json({ success: true, data: trips });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getRecentTrips = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const companyId = parseInt(req.params.companyId as string, 10);
+    if (isNaN(companyId)) {
+      return res.status(400).json({ success: false, message: 'Invalid company ID' });
+    }
+    
+    const trips = await tripRepository.getRecentTripsByCompany(companyId);
+    const formattedTrips = trips.map(trip => ({
+      tripId: trip.id,
+      vehicleModel: trip.vehicle.vehicle_model,
+      driverName: trip.driver.user.name,
+      status: trip.trip_status,
+      createdAt: trip.created_at,
+      hasStarted: trip.start_trip_at !== null
+    }));
+
+    res.status(200).json({ success: true, data: formattedTrips });
   } catch (error) {
     next(error);
   }

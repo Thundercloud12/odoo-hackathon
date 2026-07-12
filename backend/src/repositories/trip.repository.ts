@@ -9,4 +9,38 @@ export class TripRepository {
       },
     });
   }
+
+  async getRecentTripsByCompany(companyId: number) {
+    return prisma.trip.findMany({
+      where: {
+        vehicle: {
+          company_id: companyId,
+        },
+      },
+      orderBy: {
+        created_at: 'desc',
+      },
+      take: 8,
+      select: {
+        id: true,
+        trip_status: true,
+        created_at: true,
+        start_trip_at: true,
+        vehicle: {
+          select: {
+            vehicle_model: true,
+          },
+        },
+        driver: {
+          select: {
+            user: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
 }
