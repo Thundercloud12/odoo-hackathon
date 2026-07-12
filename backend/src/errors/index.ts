@@ -1,6 +1,12 @@
 import { BaseAppError } from './BaseAppError.js';
 export * from './BaseAppError.js';
 
+export class BadRequestError extends BaseAppError {
+  constructor(message = 'Bad Request') {
+    super(message, 400);
+  }
+}
+
 export class ValidationError extends BaseAppError {
   public readonly errors: any[];
   constructor(message: string, errors: any[] = []) {
