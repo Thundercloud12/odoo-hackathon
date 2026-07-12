@@ -26,4 +26,11 @@ router.get(
   fuelController.getOperationalCost
 );
 
+// GET /api/v1/fuel - Get all fuel logs for company
+router.get(
+  '/',
+  roleMiddleware(['ADMIN', 'FLEET_MANAGER', 'FINANCIAL_ANALYST']),
+  fuelController.getFuelLogs
+);
+
 export default router;

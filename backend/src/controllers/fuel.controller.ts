@@ -32,4 +32,18 @@ export class FuelController {
       next(error);
     }
   }
+
+  async getFuelLogs(req: Request, res: Response, next: NextFunction) {
+    try {
+      const companyId = req.user!.companyId;
+      const logs = await fuelService.getFuelLogs(companyId);
+      res.status(200).json({
+        success: true,
+        message: 'Fuel logs fetched successfully',
+        data: logs,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

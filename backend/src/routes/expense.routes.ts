@@ -19,4 +19,11 @@ router.post(
   expenseController.recordExpense
 );
 
+// GET /api/v1/expenses - Get all expenses for company
+router.get(
+  '/',
+  roleMiddleware(['ADMIN', 'FLEET_MANAGER', 'FINANCIAL_ANALYST']),
+  expenseController.getExpenses
+);
+
 export default router;
