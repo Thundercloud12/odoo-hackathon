@@ -22,24 +22,38 @@ model Users {
 }
 
 model Roles {
-  id    Int      @id @default(autoincrement())
-  role  RoleType @unique
-  users Users[]
+  id          Int               @id @default(autoincrement())
+  role        RoleType          @unique
+  users       Users[]
+  permissions RolePermissions[]
 }
 
 enum RoleType {
   ADMIN
   DRIVER
   FLEET_MANAGER
+  DISPATCHER
   SAFETY_OFFICER
   FINANCIAL_ANALYST
 }
 
+model RolePermissions {
+  id        Int      @id @default(autoincrement())
+  role_id   Int
+  role      Roles    @relation(fields: [role_id], references: [id], onDelete: Cascade)
+  resource  String   // "FLEET", "DRIVERS", "TRIPS", "FUEL_EXPENSE", "ANALYTICS"
+  access    String   // "WRITE", "READ", "NONE"
+
+  @@unique([role_id, resource])
+}
+
 model Companies {
-  id       Int        @id @default(autoincrement())
-  name     String
-  users    Users[]
-  vehicles Vehicles[]
+  id            Int        @id @default(autoincrement())
+  name          String
+  currency      String     @default("INR (Rs)")
+  distance_unit String     @default("Kilometers")
+  users         Users[]
+  vehicles      Vehicles[]
 }
 
 model Vehicles {

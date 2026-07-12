@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { FuelController } from '../controllers/fuel.controller.js';
 import { authMiddleware } from '../middleware/auth.middleware.js';
-import { roleMiddleware } from '../middleware/authorize.middleware.js';
+import { permissionMiddleware } from '../middleware/authorize.middleware.js';
 import { validate } from '../middleware/validate.middleware.js';
 import { fuelLogSchema } from '../schemas/fuel.schema.js';
 
@@ -14,7 +14,7 @@ router.use(authMiddleware);
 // POST /api/v1/fuel - Record a new fuel log
 router.post(
   '/',
-  roleMiddleware(['ADMIN', 'FLEET_MANAGER']),
+  permissionMiddleware('FUEL_EXPENSE', 'WRITE'),
   validate(fuelLogSchema),
   fuelController.recordFuelLog
 );
@@ -22,15 +22,11 @@ router.post(
 // GET /api/v1/fuel/:reg_no/operational-cost - Get computed total operational cost
 router.get(
   '/:reg_no/operational-cost',
-  roleMiddleware(['ADMIN', 'FLEET_MANAGER', 'FINANCIAL_ANALYST']),
+  permissionMiddleware('FUEL_EXPENSE', 'READ'),
   fuelController.getOperationalCost
 );
 
 // GET /api/v1/fuel - Get all fuel logs for company
-router.get(
-  '/',
-  roleMiddleware(['ADMIN', 'FLEET_MANAGER', 'FINANCIAL_ANALYST']),
-  fuelController.getFuelLogs
-);
+router.get('/', permissionMiddleware('FUEL_EXPENSE', 'READ'), fuelController.getFuelLogs);
 
 export default router;

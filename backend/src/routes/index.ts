@@ -10,6 +10,8 @@ import fuelRoutes from './fuel.routes.js';
 import expenseRoutes from './expense.routes.js';
 import maintenanceRoutes from './maintenance.routes.js';
 import analyticsRoutes from './analytics.routes.js';
+import permissionRoutes from './permission.routes.js';
+
 
 const router: ExpressRouter = Router();
 
@@ -24,5 +26,6 @@ router.use('/fuel', fuelRoutes);
 router.use('/expenses', expenseRoutes);
 router.use('/maintenances', maintenanceRoutes);
 router.use('/analytics', analyticsRoutes);
+router.use('/permissions', permissionRoutes);
 
 export default router;
