@@ -1,532 +1,148 @@
 {
-  "swagger": "2.0",
+  "openapi": "3.0.0",
   "info": {
     "title": "FleetOps API",
-    "description": "Automatically generated Swagger docs for the FleetOps transport operations platform",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Complete API documentation for the FleetOps transport operations platform."
   },
-  "host": "localhost:3000",
-  "basePath": "/",
-  "schemes": [
-    "http"
-  ],
   "paths": {
-    "/roles/": {
+    "/api/v1/trips": {
       "get": {
-        "description": "",
+        "summary": "Get all trips",
+        "tags": ["Trips"],
         "responses": {
-          "200": {
-            "description": "OK"
-          }
+          "200": { "description": "List of all trips" }
         }
       },
       "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "role": {
-                  "example": "any"
+        "summary": "Create a new trip",
+        "tags": ["Trips"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reg_no": { "type": "string", "example": "VAN-05" },
+                  "driver_id": { "type": "integer", "example": 1 },
+                  "src": { "type": "string", "example": "Gandhinagar Depot" },
+                  "dest": { "type": "string", "example": "Ahmedabad Hub" },
+                  "cargo_weight": { "type": "number", "example": 450 },
+                  "trip_dist": { "type": "number", "example": 38 }
                 }
               }
             }
           }
-        ],
+        },
         "responses": {
-          "201": {
-            "description": "Created"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "409": {
-            "description": "Conflict"
-          }
+          "201": { "description": "Trip successfully created" },
+          "400": { "description": "Validation Error (e.g. Double booking)" }
         }
       }
     },
-    "/roles/{id}": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        }
-      },
+    "/api/v1/trips/{id}/status": {
       "put": {
-        "description": "",
+        "summary": "Update a trip's status",
+        "tags": ["Trips"],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "role": {
-                  "example": "any"
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "trip_status": { "type": "string", "enum": ["Draft", "Dispatched", "Completed", "Cancelled"] }
                 }
               }
             }
           }
-        ],
+        },
         "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        }
-      },
-      "delete": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Not Found"
-          }
+          "200": { "description": "Status updated successfully" }
         }
       }
     },
-    "/roles/{{where{id:parseInt(idasstring)}}": {
-      "delete": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/trips/": {
+    "/api/v1/vehicles": {
       "get": {
-        "description": "",
+        "summary": "Get all vehicles",
+        "tags": ["Vehicles"],
         "responses": {
-          "200": {
-            "description": "OK"
-          }
+          "200": { "description": "List of all vehicles" }
         }
       },
       "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "reg_no": {
-                  "example": "any"
-                },
-                "driver_id": {
-                  "example": "any"
-                },
-                "src": {
-                  "example": "any"
-                },
-                "dest": {
-                  "example": "any"
-                },
-                "cargo_weight": {
-                  "example": "any"
-                },
-                "trip_dist": {
-                  "example": "any"
+        "summary": "Register a new vehicle",
+        "tags": ["Vehicles"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reg_no": { "type": "string", "example": "TRUCK-99" },
+                  "vehicle_model": { "type": "string", "example": "Volvo FH16" },
+                  "type": { "type": "string", "example": "Heavy Truck" },
+                  "load_capacity": { "type": "number", "example": 15000 },
+                  "cost": { "type": "number", "example": 120000 }
                 }
               }
             }
           }
-        ],
+        },
         "responses": {
-          "201": {
-            "description": "Created"
-          },
-          "400": {
-            "description": "Bad Request"
-          }
+          "201": { "description": "Vehicle created successfully" }
         }
       }
     },
-    "/trips/{id}": {
+    "/api/v1/drivers": {
       "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
+        "summary": "Get all drivers",
+        "tags": ["Drivers"],
         "responses": {
-          "default": {
-            "description": ""
-          }
+          "200": { "description": "List of all drivers" }
         }
       }
     },
-    "/trips/{id}/status": {
-      "put": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/kpi/": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "vehicleType",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "vehicleStatus",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "region",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/auth/register-company": {
+    "/api/v1/auth/login": {
       "post": {
-        "description": "",
-        "responses": {
-          "201": {
-            "description": "Created"
-          }
-        }
-      }
-    },
-    "/auth/login": {
-      "post": {
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/auth/forgot-password": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "email": {
-                  "example": "any"
+        "summary": "User login",
+        "tags": ["Authentication"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string", "example": "alex@fleetops.com" },
+                  "password": { "type": "string", "example": "password123" }
                 }
               }
             }
           }
-        ],
+        },
         "responses": {
-          "200": {
-            "description": "OK"
-          }
+          "200": { "description": "Login successful (Returns JWT Token)" },
+          "401": { "description": "Invalid credentials" }
         }
       }
     },
-    "/auth/reset-password": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "token": {
-                  "example": "any"
-                },
-                "newPassword": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/company/users": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created"
-          }
-        }
-      },
+    "/api/v1/kpi": {
       "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
+        "summary": "Get KPI Dashboard Metrics",
+        "tags": ["KPI"],
         "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/vehicles/": {
-      "get": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      },
-      "post": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/vehicles/{regNo}": {
-      "get": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      },
-      "patch": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "regNo",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      },
-      "delete": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/drivers/": {
-      "get": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      },
-      "post": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/drivers/{driverId}": {
-      "get": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      },
-      "patch": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "driverId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      },
-      "delete": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/fuel/": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/fuel/{reg_no}/operational-cost": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "reg_no",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/expenses/": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/maintenances/": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
+          "200": { "description": "KPI Metrics retrieved" }
         }
       }
     }
