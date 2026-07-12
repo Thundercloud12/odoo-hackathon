@@ -24,18 +24,18 @@ export interface KpiFilters {
 
 export interface FleetKpiResult {
   vehicles: {
-    active: number;       // Not retired
-    available: number;    // VehicleStatus.Available
-    onTrip: number;       // VehicleStatus.On_Trip
+    active: number; // Not retired
+    available: number; // VehicleStatus.Available
+    onTrip: number; // VehicleStatus.On_Trip
     inMaintenance: number; // VehicleStatus.In_Shop
     retired: number;
   };
   trips: {
-    active: number;   // trip_status = "Active"
-    pending: number;  // trip_status = "Pending"
+    active: number; // trip_status = "Active"
+    pending: number; // trip_status = "Pending"
   };
   drivers: {
-    onDuty: number;   // driver.status = "On Duty"
+    onDuty: number; // driver.status = "On Duty"
   };
   fleetUtilizationPct: number; // onTrip / active * 100
 }
@@ -60,14 +60,12 @@ export async function getFleetKpis(filters: KpiFilters): Promise<FleetKpiResult>
     countVehiclesByStatus(VehicleStatus.In_Shop, filters),
     countVehiclesByStatus(VehicleStatus.Retired, filters),
     countTripsByStatus(TripStatus.Dispatched, filters), // Active = in progress
-    countTripsByStatus(TripStatus.Draft, filters),       // Pending = not yet dispatched
-    countDriversByStatus(DriverStatus.On_Trip),          // On Duty = driver currently on a trip
+    countTripsByStatus(TripStatus.Draft, filters), // Pending = not yet dispatched
+    countDriversByStatus(DriverStatus.On_Trip), // On Duty = driver currently on a trip
   ]);
 
   const fleetUtilizationPct =
-    activeVehicles > 0
-      ? parseFloat(((onTripVehicles / activeVehicles) * 100).toFixed(2))
-      : 0;
+    activeVehicles > 0 ? parseFloat(((onTripVehicles / activeVehicles) * 100).toFixed(2)) : 0;
 
   return {
     vehicles: {
