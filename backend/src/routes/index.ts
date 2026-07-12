@@ -1,5 +1,6 @@
 import { Router, type Router as ExpressRouter } from 'express';
 import roleRoutes from './role.routes.js';
+import tripRoutes from './trip.routes.js';
 import kpiRoutes from './kpi.routes.js';
 import vehicleRoutes from './vehicle.routes.js';
 import driverRoutes from './driver.routes.js';
@@ -12,6 +13,7 @@ const router: ExpressRouter = Router();
 
 router.use('/roles', roleRoutes);
 
+router.use('/trips', tripRoutes);
 router.use('/kpi', kpiRoutes);
 router.use('/auth', authRoutes);
 router.use('/company', companyRoutes);
