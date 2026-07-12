@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { Hexagon, ChevronDown, AlertCircle } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/contexts/AuthContext";
+import React, { useState } from 'react';
+import { Hexagon, ChevronDown, AlertCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 
 export function LoginForm() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [role, setRole] = useState("ADMIN");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [role, setRole] = useState('ADMIN');
   const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -21,11 +21,11 @@ export function LoginForm() {
     setIsLoading(true);
 
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
       const response = await fetch(`${API_URL}/api/v1/auth/login`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
       });
@@ -33,14 +33,14 @@ export function LoginForm() {
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        throw new Error(data.message || "Invalid credentials. Please try again.");
+        throw new Error(data.message || 'Invalid credentials. Please try again.');
       }
 
       // Successful login
       login(data.data.user, data.data.token);
-      router.push("/fleet");
+      router.push('/dashboard');
     } catch (err: any) {
-      setError(err.message || "An unexpected error occurred. Please try again.");
+      setError(err.message || 'An unexpected error occurred. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -54,17 +54,12 @@ export function LoginForm() {
           <Hexagon className="h-6 w-6 text-primary" strokeWidth={2.5} />
           <span className="text-xl font-semibold text-primary-text tracking-tight">FleetOps</span>
         </div>
-        <h2 className="text-[24px] font-semibold tracking-tight text-primary-text">
-          Welcome back
-        </h2>
-        <p className="text-[16px] text-secondary-text">
-          Sign in to continue to FleetOps
-        </p>
+        <h2 className="text-[24px] font-semibold tracking-tight text-primary-text">Welcome back</h2>
+        <p className="text-[16px] text-secondary-text">Sign in to continue to FleetOps</p>
       </div>
 
       {/* Form */}
       <form className="flex flex-col space-y-5" onSubmit={handleSubmit}>
-
         {/* Error State */}
         {error && (
           <div className="flex items-center space-x-3 rounded-md bg-error/10 border border-error/20 px-4 py-3 text-error animate-in fade-in slide-in-from-top-1">
@@ -142,8 +137,19 @@ export function LoginForm() {
                 disabled={isLoading}
                 className="peer appearance-none w-4 h-4 rounded-sm border border-border bg-surface checked:bg-primary checked:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer disabled:opacity-50"
               />
-              <svg className="absolute w-3 h-3 text-white opacity-0 peer-checked:opacity-100 pointer-events-none" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M1 5L4.5 8.5L13 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <svg
+                className="absolute w-3 h-3 text-white opacity-0 peer-checked:opacity-100 pointer-events-none"
+                viewBox="0 0 14 10"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M1 5L4.5 8.5L13 1"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </div>
             <span className="text-[14px] text-secondary-text group-hover:text-primary-text transition-colors">
@@ -159,12 +165,28 @@ export function LoginForm() {
           className="mt-2 h-12 w-full rounded-md bg-primary text-[16px] font-medium text-white hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
         >
           {isLoading ? (
-            <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            <svg
+              className="animate-spin h-5 w-5 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
             </svg>
           ) : (
-            "Sign In"
+            'Sign In'
           )}
         </button>
       </form>
