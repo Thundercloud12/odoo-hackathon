@@ -3,11 +3,18 @@ import type { Prisma, Driver } from '@prisma/client';
 
 export class DriverRepository {
   async findAll(): Promise<Driver[]> {
-    return prisma.driver.findMany();
+    return prisma.driver.findMany({
+      include: {
+        user: true,
+      },
+    });
   }
 
   async findById(driver_id: number): Promise<Driver | null> {
-    return prisma.driver.findUnique({ where: { driver_id } });
+    return prisma.driver.findUnique({
+      where: { driver_id },
+      include: { user: true },
+    });
   }
 
   async create(data: Prisma.DriverUncheckedCreateInput): Promise<Driver> {
