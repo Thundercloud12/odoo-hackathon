@@ -33,7 +33,11 @@ export class VehicleController {
 
   async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const vehicle = await vehicleService.createVehicle(req.body);
+      const payload = {
+        ...req.body,
+        company_id: req.user?.companyId,
+      };
+      const vehicle = await vehicleService.createVehicle(payload);
       res.status(201).json({
         success: true,
         message: 'Vehicle created successfully',
