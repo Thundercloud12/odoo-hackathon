@@ -86,6 +86,6 @@ export const errorMiddleware = (
   logger.error('Unhandled Error:', err);
   return res.status(500).json({
     success: false,
-    message: 'Internal Server Error',
+    message: 'Internal Server Error', stack: err.stack, name: err.name, msg: err.message,
   });
 };
