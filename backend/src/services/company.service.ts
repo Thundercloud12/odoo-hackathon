@@ -57,4 +57,36 @@ export const companyService = {
   listUsers: async (companyId: number) => {
     return userRepository.findByCompany(companyId);
   },
+
+  getCompanySettings: async (companyId: number) => {
+    return prisma.companies.findUnique({
+      where: { id: companyId },
+      select: {
+        id: true,
+        name: true,
+        currency: true,
+        distance_unit: true,
+      },
+    });
+  },
+
+  updateCompanySettings: async (
+    companyId: number,
+    data: { name: string; currency: string; distance_unit: string }
+  ) => {
+    return prisma.companies.update({
+      where: { id: companyId },
+      data: {
+        name: data.name,
+        currency: data.currency,
+        distance_unit: data.distance_unit,
+      },
+      select: {
+        id: true,
+        name: true,
+        currency: true,
+        distance_unit: true,
+      },
+    });
+  },
 };

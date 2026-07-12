@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { MaintenanceController } from '../controllers/maintenance.controller.js';
 import { authMiddleware } from '../middleware/auth.middleware.js';
-import { roleMiddleware } from '../middleware/authorize.middleware.js';
+import { permissionMiddleware } from '../middleware/authorize.middleware.js';
 import { validate } from '../middleware/validate.middleware.js';
 import { maintenanceSchema } from '../schemas/maintenance.schema.js';
 
@@ -14,7 +14,7 @@ router.use(authMiddleware);
 // POST /api/v1/maintenances - Record a new vehicle maintenance event
 router.post(
   '/',
-  roleMiddleware(['ADMIN', 'FLEET_MANAGER']),
+  permissionMiddleware('FLEET', 'WRITE'),
   validate(maintenanceSchema),
   maintenanceController.recordMaintenance
 );
