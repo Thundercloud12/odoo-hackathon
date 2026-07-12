@@ -60,4 +60,8 @@ export class FuelService {
       total_operational_cost: totalFuelCost + totalMaintenanceCost,
     };
   }
+
+  async getFuelLogs(companyId: number): Promise<Fuel_Logs[]> {
+    return fuelRepository.findByCompany(companyId);
+  }
 }

@@ -22,8 +22,16 @@ async function main() {
   // 1. Company
   const company = await prisma.companies.upsert({
     where: { id: 1 },
-    update: {},
-    create: { name: 'TransitOps' },
+    update: {
+      name: 'Gandhinagar Depot GJ4',
+      currency: 'INR (Rs)',
+      distance_unit: 'Kilometers',
+    },
+    create: {
+      name: 'Gandhinagar Depot GJ4',
+      currency: 'INR (Rs)',
+      distance_unit: 'Kilometers',
+    },
   });
   console.log(`created/fetched Company: ${company.name}`);
 
@@ -32,6 +40,7 @@ async function main() {
     'ADMIN',
     'DRIVER',
     'FLEET_MANAGER',
+    'DISPATCHER',
     'SAFETY_OFFICER',
     'FINANCIAL_ANALYST',
   ] as RoleType[];
@@ -47,10 +56,71 @@ async function main() {
   const adminRole = await prisma.roles.findUnique({ where: { role: 'ADMIN' } });
   const driverRole = await prisma.roles.findUnique({ where: { role: 'DRIVER' } });
   const fleetManagerRole = await prisma.roles.findUnique({ where: { role: 'FLEET_MANAGER' } });
+  const dispatcherRole = await prisma.roles.findUnique({ where: { role: 'DISPATCHER' } });
   const safetyOfficerRole = await prisma.roles.findUnique({ where: { role: 'SAFETY_OFFICER' } });
   const financialAnalystRole = await prisma.roles.findUnique({
     where: { role: 'FINANCIAL_ANALYST' },
   });
+
+  // 2.5 Role Permissions
+  await prisma.rolePermissions.deleteMany({});
+  const defaultPermissions = [
+    // ADMIN
+    { role: 'ADMIN', resource: 'FLEET', access: 'WRITE' },
+    { role: 'ADMIN', resource: 'DRIVERS', access: 'WRITE' },
+    { role: 'ADMIN', resource: 'TRIPS', access: 'WRITE' },
+    { role: 'ADMIN', resource: 'FUEL_EXPENSE', access: 'WRITE' },
+    { role: 'ADMIN', resource: 'ANALYTICS', access: 'WRITE' },
+
+    // FLEET_MANAGER
+    { role: 'FLEET_MANAGER', resource: 'FLEET', access: 'WRITE' },
+    { role: 'FLEET_MANAGER', resource: 'DRIVERS', access: 'WRITE' },
+    { role: 'FLEET_MANAGER', resource: 'TRIPS', access: 'NONE' },
+    { role: 'FLEET_MANAGER', resource: 'FUEL_EXPENSE', access: 'NONE' },
+    { role: 'FLEET_MANAGER', resource: 'ANALYTICS', access: 'WRITE' },
+
+    // DISPATCHER
+    { role: 'DISPATCHER', resource: 'FLEET', access: 'READ' },
+    { role: 'DISPATCHER', resource: 'DRIVERS', access: 'NONE' },
+    { role: 'DISPATCHER', resource: 'TRIPS', access: 'WRITE' },
+    { role: 'DISPATCHER', resource: 'FUEL_EXPENSE', access: 'NONE' },
+    { role: 'DISPATCHER', resource: 'ANALYTICS', access: 'NONE' },
+
+    // SAFETY_OFFICER
+    { role: 'SAFETY_OFFICER', resource: 'FLEET', access: 'NONE' },
+    { role: 'SAFETY_OFFICER', resource: 'DRIVERS', access: 'WRITE' },
+    { role: 'SAFETY_OFFICER', resource: 'TRIPS', access: 'READ' },
+    { role: 'SAFETY_OFFICER', resource: 'FUEL_EXPENSE', access: 'NONE' },
+    { role: 'SAFETY_OFFICER', resource: 'ANALYTICS', access: 'NONE' },
+
+    // FINANCIAL_ANALYST
+    { role: 'FINANCIAL_ANALYST', resource: 'FLEET', access: 'READ' },
+    { role: 'FINANCIAL_ANALYST', resource: 'DRIVERS', access: 'NONE' },
+    { role: 'FINANCIAL_ANALYST', resource: 'TRIPS', access: 'NONE' },
+    { role: 'FINANCIAL_ANALYST', resource: 'FUEL_EXPENSE', access: 'WRITE' },
+    { role: 'FINANCIAL_ANALYST', resource: 'ANALYTICS', access: 'WRITE' },
+
+    // DRIVER
+    { role: 'DRIVER', resource: 'FLEET', access: 'NONE' },
+    { role: 'DRIVER', resource: 'DRIVERS', access: 'NONE' },
+    { role: 'DRIVER', resource: 'TRIPS', access: 'NONE' },
+    { role: 'DRIVER', resource: 'FUEL_EXPENSE', access: 'NONE' },
+    { role: 'DRIVER', resource: 'ANALYTICS', access: 'NONE' },
+  ];
+
+  for (const perm of defaultPermissions) {
+    const roleRecord = await prisma.roles.findUnique({ where: { role: perm.role as RoleType } });
+    if (roleRecord) {
+      await prisma.rolePermissions.create({
+        data: {
+          role_id: roleRecord.id,
+          resource: perm.resource,
+          access: perm.access,
+        },
+      });
+    }
+  }
+  console.log('seeded role permissions');
 
   // 3. Users with hashed passwords
   const passwordHash = await bcrypt.hash('password123', 10);
@@ -111,6 +181,20 @@ async function main() {
     },
   });
   console.log(`created/fetched Financial Analyst: ${financeUser.name}`);
+
+  // Dispatcher user
+  const dispatcherUser = await prisma.users.upsert({
+    where: { email: 'dispatcher@transitops.com' },
+    update: { password: passwordHash },
+    create: {
+      company_id: company.id,
+      role_id: dispatcherRole!.id,
+      name: 'Dispatcher User',
+      email: 'dispatcher@transitops.com',
+      password: passwordHash,
+    },
+  });
+  console.log(`created/fetched Dispatcher: ${dispatcherUser.name}`);
 
   // Driver User 1 (Alex)
   const driverUser1 = await prisma.users.upsert({

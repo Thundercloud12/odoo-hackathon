@@ -17,4 +17,18 @@ export class ExpenseController {
       next(error);
     }
   }
+
+  async getExpenses(req: Request, res: Response, next: NextFunction) {
+    try {
+      const companyId = req.user!.companyId;
+      const expenses = await expenseService.getExpenses(companyId);
+      res.status(200).json({
+        success: true,
+        message: 'Expenses fetched successfully',
+        data: expenses,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

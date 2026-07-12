@@ -21,4 +21,10 @@ router.post(
 // GET /api/company/users — ADMIN, FLEET_MANAGER
 router.get('/users', roleMiddleware(['ADMIN', 'FLEET_MANAGER']), companyController.listUsers);
 
+// GET /api/company/settings — All authenticated users
+router.get('/settings', companyController.getSettings);
+
+// PUT /api/company/settings — ADMIN only
+router.put('/settings', roleMiddleware(['ADMIN']), companyController.updateSettings);
+
 export default router;

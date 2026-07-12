@@ -86,18 +86,22 @@ export default function DashboardPage() {
         }),
         fetch(`${API_URL}/api/v1/trips/recent/${companyId}?${tripParams.toString()}`, {
           headers: { Authorization: `Bearer ${token}` },
-        }),
+        }).catch(() => null),
       ]);
 
-      if (!kpiRes.ok || !tripsRes.ok) {
+      if (!kpiRes.ok) {
         throw new Error('Failed to load dashboard data. Please try again.');
       }
 
       const kpiJson = await kpiRes.json();
-      const tripsJson = await tripsRes.json();
-
       setKpiData(kpiJson.data);
-      setRecentTrips(tripsJson.data);
+
+      if (tripsRes && tripsRes.ok) {
+        const tripsJson = await tripsRes.json();
+        setRecentTrips(tripsJson.data || []);
+      } else {
+        setRecentTrips([]);
+      }
     } catch (err: any) {
       setError(err.message || 'An unexpected error occurred');
     } finally {
