@@ -26,15 +26,27 @@ export const getRecentTrips = async (req: Request, res: Response, next: NextFunc
     if (isNaN(companyId)) {
       return res.status(400).json({ success: false, message: 'Invalid company ID' });
     }
-    
-    const trips = await tripRepository.getRecentTripsByCompany(companyId);
-    const formattedTrips = trips.map(trip => ({
+
+    const { vehicleType, status } = req.query;
+
+    const trips = await tripRepository.getRecentTripsByCompany(companyId, {
+      vehicleType: vehicleType as string,
+      status: status as string,
+    });
+    const formattedTrips = trips.map((trip) => ({
       tripId: trip.id,
+      regNo: trip.reg_no,
+      src: trip.src,
+      dest: trip.dest,
+      srcLat: trip.src_lat,
+      srcLng: trip.src_lng,
+      destLat: trip.dest_lat,
+      destLng: trip.dest_lng,
       vehicleModel: trip.vehicle.vehicle_model,
       driverName: trip.driver.user.name,
       status: trip.trip_status,
       createdAt: trip.created_at,
-      hasStarted: trip.start_trip_at !== null
+      hasStarted: trip.start_trip_at !== null,
     }));
 
     res.status(200).json({ success: true, data: formattedTrips });
@@ -95,9 +107,12 @@ export const createTrip = async (req: Request, res: Response, next: NextFunction
         throw new Error(`Cargo weight exceeds vehicle capacity (${vehicle.load_capacity})`);
 
       const activeVehicleTrip = await tx.trip.findFirst({
-        where: { reg_no, trip_status: { in: ['Draft', 'Dispatched'] } }
+        where: { reg_no, trip_status: { in: ['Draft', 'Dispatched'] } },
       });
-      if (activeVehicleTrip) throw new Error(`Vehicle ${reg_no} is already assigned to active trip #${activeVehicleTrip.id}`);
+      if (activeVehicleTrip)
+        throw new Error(
+          `Vehicle ${reg_no} is already assigned to active trip #${activeVehicleTrip.id}`
+        );
 
       const driver = await tx.driver.findUnique({ where: { driver_id } });
       if (!driver) throw new Error('Driver not found');
@@ -105,9 +120,12 @@ export const createTrip = async (req: Request, res: Response, next: NextFunction
         throw new Error(`Driver is not available (Current status: ${driver.status})`);
 
       const activeDriverTrip = await tx.trip.findFirst({
-        where: { driver_id, trip_status: { in: ['Draft', 'Dispatched'] } }
+        where: { driver_id, trip_status: { in: ['Draft', 'Dispatched'] } },
       });
-      if (activeDriverTrip) throw new Error(`Driver ${driver_id} is already assigned to active trip #${activeDriverTrip.id}`);
+      if (activeDriverTrip)
+        throw new Error(
+          `Driver ${driver_id} is already assigned to active trip #${activeDriverTrip.id}`
+        );
 
       const trip = await tx.trip.create({
         data: {

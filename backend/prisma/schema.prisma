@@ -87,6 +87,10 @@ model Trip {
   driver          Driver     @relation(fields: [driver_id], references: [driver_id])
   src             String
   dest            String
+  src_lat         Float?
+  src_lng         Float?
+  dest_lat        Float?
+  dest_lng        Float?
   cargo_weight    Float
   trip_dist       Float
   trip_status     TripStatus
