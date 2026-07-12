@@ -105,12 +105,12 @@ export default function FuelExpensesPage() {
       const fuelJson = await fuelRes.json();
       const expenseJson = await expenseRes.json();
 
-      let vehicleJson = { data: [] };
+      let vehicleJson: { data: Vehicle[] } = { data: [] };
       if (vehicleRes && vehicleRes.ok) {
         vehicleJson = await vehicleRes.json();
       }
 
-      let tripsJson = { data: [] };
+      let tripsJson: { data: Trip[] } = { data: [] };
       if (tripsRes && tripsRes.ok) {
         tripsJson = await tripsRes.json();
       }

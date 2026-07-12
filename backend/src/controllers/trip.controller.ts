@@ -7,7 +7,10 @@ const tripRepository = new TripRepository();
 
 export const getTrips = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const companyId = (req as any).user?.companyId;
+
     const trips = await prisma.trip.findMany({
+      where: companyId ? { vehicle: { company_id: companyId } } : undefined,
       include: {
         vehicle: true,
         driver: { include: { user: true } },
@@ -82,7 +85,18 @@ export const getTripById = async (
 
 export const createTrip = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { reg_no, driver_id, src, dest, cargo_weight, trip_dist } = req.body;
+    const {
+      reg_no,
+      driver_id,
+      src,
+      dest,
+      cargo_weight,
+      trip_dist,
+      src_lat,
+      src_lng,
+      dest_lat,
+      dest_lng,
+    } = req.body;
     if (
       !reg_no ||
       !driver_id ||
@@ -136,6 +150,10 @@ export const createTrip = async (req: Request, res: Response, next: NextFunction
           cargo_weight,
           trip_dist,
           trip_status: 'Draft',
+          ...(src_lat !== undefined && { src_lat: parseFloat(src_lat) }),
+          ...(src_lng !== undefined && { src_lng: parseFloat(src_lng) }),
+          ...(dest_lat !== undefined && { dest_lat: parseFloat(dest_lat) }),
+          ...(dest_lng !== undefined && { dest_lng: parseFloat(dest_lng) }),
         },
       });
       return trip;
