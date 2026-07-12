@@ -50,9 +50,19 @@ export const createTrip = async (req: Request, res: Response, next: NextFunction
       if (vehicle.status !== 'Available') throw new Error(`Vehicle is not available (Current status: ${vehicle.status})`);
       if (cargo_weight > vehicle.load_capacity) throw new Error(`Cargo weight exceeds vehicle capacity (${vehicle.load_capacity})`);
 
+      const activeVehicleTrip = await tx.trip.findFirst({
+        where: { reg_no, trip_status: { in: ['Draft', 'Dispatched'] } }
+      });
+      if (activeVehicleTrip) throw new Error(`Vehicle ${reg_no} is already assigned to active trip #${activeVehicleTrip.id}`);
+
       const driver = await tx.driver.findUnique({ where: { driver_id } });
       if (!driver) throw new Error('Driver not found');
       if (driver.status !== 'Available') throw new Error(`Driver is not available (Current status: ${driver.status})`);
+
+      const activeDriverTrip = await tx.trip.findFirst({
+        where: { driver_id, trip_status: { in: ['Draft', 'Dispatched'] } }
+      });
+      if (activeDriverTrip) throw new Error(`Driver ${driver_id} is already assigned to active trip #${activeDriverTrip.id}`);
 
       const trip = await tx.trip.create({
         data: {

@@ -40,5 +40,5 @@
     "moduleDetection": "force",
     "skipLibCheck": true
   },  
-  "exclude": ["node_modules", "dist", "prisma/seed.ts"]
+  "exclude": ["node_modules", "dist"]
 }
