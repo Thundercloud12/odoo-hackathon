@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id       Int     @id @default(autoincrement())
+  role_id  Int
+  role     Roles   @relation(fields: [role_id], references: [id])
+  name     String
+  email    String  @unique
+  password String
+  driver   Driver?
+}
+
+model Roles {
+  id    Int     @id @default(autoincrement())
+  role  String  @unique
+  users Users[]
+}
+
+model Vehicles {
+  reg_no           String      @id
+  vehicle_model    String
+  type             String
+  load_capacity    Float
+  odometer_reading Float
+  cost             Float
+  status           String
+  trips            Trip[]
+  fuel_logs        Fuel_Logs[]
+  expenses         Expenses[]
+}
+
+model Driver {
+  license_no   String   @id
+  driver_id    Int      @unique
+  user         Users    @relation(fields: [driver_id], references: [id])
+  status       String
+  safety_score Float
+  license_type String
+  expiry_date  DateTime
+  trips        Trip[]
+}
+
+model Trip {
+  id           Int        @id @default(autoincrement())
+  reg_no       String
+  vehicle      Vehicles   @relation(fields: [reg_no], references: [reg_no])
+  driver_id    Int
+  driver       Driver     @relation(fields: [driver_id], references: [driver_id])
+  src          String
+  dest         String
+  cargo_weight Float
+  trip_dist    Float
+  trip_status  String
+  expenses     Expenses[]
+}
+
+model Fuel_Logs {
+  id        Int      @id @default(autoincrement())
+  reg_no    String
+  vehicle   Vehicles @relation(fields: [reg_no], references: [reg_no])
+  date      DateTime
+  litres    Float
+  fuel_cost Float
+}
+
+model Expenses {
+  id          Int      @id @default(autoincrement())
+  trip_id     Int
+  trip        Trip     @relation(fields: [trip_id], references: [id])
+  reg_no      String
+  vehicle     Vehicles @relation(fields: [reg_no], references: [reg_no])
+  maintenance Float
+  toll        Float
+  others      Float
+}
