@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React from "react";
-import clsx from "clsx";
+import React from 'react';
+import clsx from 'clsx';
 
 export interface Vehicle {
   reg_no: string;
@@ -10,7 +10,7 @@ export interface Vehicle {
   load_capacity: number;
   odometer_reading: number;
   cost: number;
-  status: "Available" | "On Trip" | "In Shop" | "Retired";
+  status: 'Available' | 'On Trip' | 'In Shop' | 'Retired';
 }
 
 interface VehicleTableProps {
@@ -18,23 +18,23 @@ interface VehicleTableProps {
 }
 
 export function VehicleTable({ vehicles }: VehicleTableProps) {
-  const getStatusBadge = (status: Vehicle["status"]) => {
+  const getStatusBadge = (status: Vehicle['status']) => {
     switch (status) {
-      case "Available":
-        return "bg-green-100 text-green-700 border-green-200";
-      case "On Trip":
-        return "bg-blue-100 text-blue-700 border-blue-200";
-      case "In Shop":
-        return "bg-orange-100 text-orange-700 border-orange-200";
-      case "Retired":
-        return "bg-red-100 text-red-700 border-red-200";
+      case 'Available':
+        return 'bg-green-100 text-green-700 border-green-200';
+      case 'On Trip':
+        return 'bg-blue-100 text-blue-700 border-blue-200';
+      case 'In Shop':
+        return 'bg-orange-100 text-orange-700 border-orange-200';
+      case 'Retired':
+        return 'bg-red-100 text-red-700 border-red-200';
       default:
-        return "bg-gray-100 text-gray-700 border-gray-200";
+        return 'bg-gray-100 text-gray-700 border-gray-200';
     }
   };
 
   const formatNumber = (num: number) => {
-    return new Intl.NumberFormat("en-US").format(num);
+    return new Intl.NumberFormat('en-US').format(num);
   };
 
   return (
@@ -45,25 +45,46 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
             <table className="min-w-full divide-y divide-border">
               <thead className="bg-black/5">
                 <tr>
-                  <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-xs font-medium uppercase tracking-wider text-secondary-text sm:pl-6">
+                  <th
+                    scope="col"
+                    className="py-3.5 pl-4 pr-3 text-left text-xs font-medium uppercase tracking-wider text-secondary-text sm:pl-6"
+                  >
                     Reg. No. (Unique)
                   </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-xs font-medium uppercase tracking-wider text-secondary-text">
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left text-xs font-medium uppercase tracking-wider text-secondary-text"
+                  >
                     Name/Model
                   </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-xs font-medium uppercase tracking-wider text-secondary-text">
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left text-xs font-medium uppercase tracking-wider text-secondary-text"
+                  >
                     Type
                   </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-xs font-medium uppercase tracking-wider text-secondary-text">
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left text-xs font-medium uppercase tracking-wider text-secondary-text"
+                  >
                     Capacity
                   </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-xs font-medium uppercase tracking-wider text-secondary-text">
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left text-xs font-medium uppercase tracking-wider text-secondary-text"
+                  >
                     Odometer
                   </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-xs font-medium uppercase tracking-wider text-secondary-text">
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left text-xs font-medium uppercase tracking-wider text-secondary-text"
+                  >
                     Acq. Cost
                   </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-xs font-medium uppercase tracking-wider text-secondary-text">
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left text-xs font-medium uppercase tracking-wider text-secondary-text"
+                  >
                     Status
                   </th>
                 </tr>
@@ -92,7 +113,7 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
                     <td className="whitespace-nowrap px-3 py-4 text-sm">
                       <span
                         className={clsx(
-                          "inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-medium",
+                          'inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-medium',
                           getStatusBadge(vehicle.status)
                         )}
                       >
@@ -115,7 +136,10 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
       </div>
 
       <div className="mt-4 flex items-center justify-between text-xs text-primary font-medium">
-        <p>Rule: Registration No. must be unique • Retired/In Shop vehicles are hidden from Trip Dispatcher</p>
+        <p>
+          Rule: Registration No. must be unique • Retired/In Shop vehicles are hidden from Trip
+          Dispatcher
+        </p>
       </div>
     </div>
   );
