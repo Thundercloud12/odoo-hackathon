@@ -5,7 +5,7 @@ import type { Prisma, Driver } from '@prisma/client';
 const driverRepository = new DriverRepository();
 
 export class DriverService {
-  async findAllDrivers(): Promise<Driver[]> {
+  async findAllDrivers(): Promise<any[]> {
     return driverRepository.findAll();
   }
 

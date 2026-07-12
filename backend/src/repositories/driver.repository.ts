@@ -2,8 +2,8 @@ import { prisma } from '../config/prisma.js';
 import type { Prisma, Driver } from '@prisma/client';
 
 export class DriverRepository {
-  async findAll(): Promise<Driver[]> {
-    return prisma.driver.findMany();
+  async findAll(): Promise<any[]> {
+    return prisma.driver.findMany({ include: { user: true } });
   }
 
   async findById(driver_id: number): Promise<Driver | null> {

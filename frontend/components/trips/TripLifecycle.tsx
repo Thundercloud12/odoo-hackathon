@@ -2,12 +2,16 @@ import React from "react";
 import { Check, X, Truck, FileText } from "lucide-react";
 import clsx from "clsx";
 
-export function TripLifecycle() {
+export function TripLifecycle({ currentStatus = 'Draft' }: { currentStatus?: string }) {
+  const isDispatched = ['Dispatched', 'Completed'].includes(currentStatus);
+  const isCompleted = currentStatus === 'Completed';
+  const isCancelled = currentStatus === 'Cancelled';
+
   const steps = [
     { id: 'draft', label: 'Draft', color: 'bg-emerald-500', textColor: 'text-emerald-600', icon: FileText, active: true },
-    { id: 'dispatched', label: 'Dispatched', color: 'bg-blue-500', textColor: 'text-blue-600', icon: Truck, active: true },
-    { id: 'completed', label: 'Completed', color: 'bg-gray-400', textColor: 'text-gray-500', icon: Check, active: false },
-    { id: 'cancelled', label: 'Cancelled', color: 'bg-red-500', textColor: 'text-red-600', icon: X, active: false },
+    { id: 'dispatched', label: 'Dispatched', color: 'bg-blue-500', textColor: 'text-blue-600', icon: Truck, active: isDispatched },
+    { id: 'completed', label: 'Completed', color: 'bg-gray-800', textColor: 'text-gray-900', icon: Check, active: isCompleted },
+    { id: 'cancelled', label: 'Cancelled', color: 'bg-red-500', textColor: 'text-red-600', icon: X, active: isCancelled },
   ];
 
   return (
