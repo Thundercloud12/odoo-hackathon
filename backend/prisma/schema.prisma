@@ -8,17 +8,17 @@ datasource db {
 }
 
 model Users {
-  id         Int       @id @default(autoincrement())
-  company_id Int
-  company    Companies @relation(fields: [company_id], references: [id])
-  role_id    Int
-  role       Roles     @relation(fields: [role_id], references: [id])
-  name       String
-  email      String    @unique
-  password   String
+  id                     Int       @id @default(autoincrement())
+  company_id             Int
+  company                Companies @relation(fields: [company_id], references: [id])
+  role_id                Int
+  role                   Roles     @relation(fields: [role_id], references: [id])
+  name                   String
+  email                  String    @unique
+  password               String
   password_reset_token   String?
   password_reset_expires DateTime?
-  driver     Driver?
+  driver                 Driver?
 }
 
 model Roles {
@@ -28,16 +28,16 @@ model Roles {
 }
 
 model Companies {
-  id    Int     @id @default(autoincrement())
-  name  String
-  users Users[]
+  id       Int        @id @default(autoincrement())
+  name     String
+  users    Users[]
   vehicles Vehicles[]
 }
 
 model Vehicles {
   company_id       Int
-  company          Companies   @relation(fields: [company_id], references: [id])
-  reg_no           String      @id
+  company          Companies     @relation(fields: [company_id], references: [id])
+  reg_no           String        @id
   vehicle_model    String
   type             String
   load_capacity    Float
@@ -51,13 +51,13 @@ model Vehicles {
 }
 
 model Maintenance {
-  id         Int            @id @default(autoincrement())
-  reg_no     String
-  vehicle    Vehicles       @relation(fields: [reg_no], references: [reg_no])
+  id           Int         @id @default(autoincrement())
+  reg_no       String
+  vehicle      Vehicles    @relation(fields: [reg_no], references: [reg_no])
   service_type ServiceType
-  cost       Float
-  date       DateTime
-  status     String
+  cost         Float
+  date         DateTime
+  status       String
 }
 
 model Driver {
@@ -124,7 +124,6 @@ enum TripStatus {
   Dispatched
   Completed
   Cancelled
-
 }
 
 enum ServiceType {

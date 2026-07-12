@@ -4,21 +4,23 @@ import tripRoutes from './trip.routes.js';
 import kpiRoutes from './kpi.routes.js';
 import vehicleRoutes from './vehicle.routes.js';
 import driverRoutes from './driver.routes.js';
-
 import authRoutes from './auth.routes.js';
 import companyRoutes from './company.routes.js';
-
+import fuelRoutes from './fuel.routes.js';
+import expenseRoutes from './expense.routes.js';
+import maintenanceRoutes from './maintenance.routes.js';
 
 const router: ExpressRouter = Router();
 
 router.use('/roles', roleRoutes);
-
 router.use('/trips', tripRoutes);
 router.use('/kpi', kpiRoutes);
 router.use('/auth', authRoutes);
 router.use('/company', companyRoutes);
-
 router.use('/vehicles', vehicleRoutes);
 router.use('/drivers', driverRoutes);
+router.use('/fuel', fuelRoutes);
+router.use('/expenses', expenseRoutes);
+router.use('/maintenances', maintenanceRoutes);
 
 export default router;
