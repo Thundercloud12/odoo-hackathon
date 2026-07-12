@@ -10,8 +10,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Register routes
-// import routes from './routes';
-// app.use('/api/v1', routes);
+import routes from './routes/index.js';
+app.use('/api/v1', routes);
 
 app.get('/health', (req, res) => {
   res.status(200).json({ success: true, message: 'Server is healthy' });
