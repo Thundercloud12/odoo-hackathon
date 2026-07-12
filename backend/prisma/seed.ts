@@ -507,6 +507,32 @@ async function main() {
   });
   console.log('created extra completed trips for analytics');
 
+  // --- Reconcile vehicle & driver statuses with active trips ---
+  // Trip 3: TRUCK-02 / Jane Smith → Dispatched
+  //   already seeded correctly above (TRUCK-02 = On_Trip, Jane = On_Trip)
+
+  // Trip 4: TRUCK-01 / John Doe → Draft (vehicle is reserved, not available)
+  await prisma.vehicles.update({
+    where: { reg_no: 'TRUCK-01' },
+    data: { status: VehicleStatus.On_Trip },
+  });
+  await prisma.driver.update({
+    where: { driver_id: driver2.driver_id },
+    data: { status: DriverStatus.On_Trip },
+  });
+
+  // Trip 5: VAN-05 / Alex → Dispatched
+  await prisma.vehicles.update({
+    where: { reg_no: 'VAN-05' },
+    data: { status: VehicleStatus.On_Trip },
+  });
+  await prisma.driver.update({
+    where: { driver_id: driver1.driver_id },
+    data: { status: DriverStatus.On_Trip },
+  });
+
+  console.log('reconciled vehicle & driver statuses with active trips');
+
   // 7. Fuel Logs
   // Fuel Logs for VAN-05
   await prisma.fuel_Logs.createMany({
