@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, DriverStatus, VehicleStatus } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -42,7 +42,7 @@ async function main() {
     create: {
       license_no: 'DL-123456789',
       driver_id: user.id,
-      status: 'Available',
+      status: DriverStatus.Available,
       safety_score: 98.5,
       license_type: 'Commercial',
       expiry_date: new Date('2029-12-31'),
@@ -53,15 +53,16 @@ async function main() {
   // vehicle
   const vehicle = await prisma.vehicles.upsert({
     where: { reg_no: 'VAN-05' },
-    update: { status: 'Available' },
+    update: { status: VehicleStatus.Available, company_id: company.id },
     create: {
       reg_no: 'VAN-05',
+      company_id: company.id,
       vehicle_model: 'Ford Transit',
       type: 'Van',
       load_capacity: 500,
       odometer_reading: 15000,
       cost: 45000,
-      status: 'Available',
+      status: VehicleStatus.Available,
     },
   });
   console.log(`created vehicle (Reg No: ${vehicle.reg_no}, Capacity: 500kg)`);
