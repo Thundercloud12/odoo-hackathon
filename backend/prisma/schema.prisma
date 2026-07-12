@@ -38,7 +38,7 @@ model Vehicles {
   load_capacity    Float
   odometer_reading Float
   cost             Float
-  status           String
+  status           VehicleStatus
   trips            Trip[]
   fuel_logs        Fuel_Logs[]
   expenses         Expenses[]
@@ -88,3 +88,11 @@ model Expenses {
   toll        Float
   others      Float
 }
+
+enum VehicleStatus {
+  Available
+  On_Trip   @map("On Trip")
+  In_Shop   @map("In Shop")
+  Retired
+}
+
