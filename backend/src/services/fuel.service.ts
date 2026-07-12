@@ -33,7 +33,12 @@ export class FuelService {
   async getOperationalCost(
     companyId: number,
     reg_no: string
-  ): Promise<{ reg_no: string; total_fuel_cost: number; total_maintenance_cost: number; total_operational_cost: number }> {
+  ): Promise<{
+    reg_no: string;
+    total_fuel_cost: number;
+    total_maintenance_cost: number;
+    total_operational_cost: number;
+  }> {
     const vehicle = await vehicleRepository.findByRegistrationNumber(reg_no);
     if (!vehicle) {
       throw new NotFoundError(`Vehicle with registration number ${reg_no} not found`);

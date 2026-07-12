@@ -1,22 +1,22 @@
 import type { Request, Response, NextFunction } from 'express';
 import { Prisma } from '@prisma/client';
-import { 
-  BaseAppError, 
-  ValidationError, 
-  ConflictError, 
-  NotFoundError, 
-  BadRequestError 
+import {
+  BaseAppError,
+  ValidationError,
+  ConflictError,
+  NotFoundError,
+  BadRequestError,
 } from '../errors/index.js';
 import { logger } from '../utils/logger.js';
 
-export const errorMiddleware = (
-  err: any,
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const errorMiddleware = (err: any, req: Request, res: Response, next: NextFunction) => {
   // 1. Handle Malformed JSON body parsing / SyntaxError from Express body-parser
-  if (err instanceof SyntaxError && 'status' in err && (err as any).status === 400 && 'body' in err) {
+  if (
+    err instanceof SyntaxError &&
+    'status' in err &&
+    (err as any).status === 400 &&
+    'body' in err
+  ) {
     const badRequestError = new BadRequestError('Malformed JSON payload');
     return res.status(badRequestError.statusCode).json({
       success: false,
@@ -43,12 +43,15 @@ export const errorMiddleware = (
       case 'P2003': {
         // Foreign key constraint violation (e.g. invalid role_id or company_id)
         const field = (err.meta?.field_name as string) || 'field';
-        mappedError = new ValidationError(`Invalid reference: the provided ${field} does not exist.`, [
-          {
-            message: `Foreign key constraint failed on ${field}`,
-            code: 'invalid_association',
-          }
-        ]);
+        mappedError = new ValidationError(
+          `Invalid reference: the provided ${field} does not exist.`,
+          [
+            {
+              message: `Foreign key constraint failed on ${field}`,
+              code: 'invalid_association',
+            },
+          ]
+        );
         break;
       }
       default:
@@ -86,6 +89,9 @@ export const errorMiddleware = (
   logger.error('Unhandled Error:', err);
   return res.status(500).json({
     success: false,
-    message: 'Internal Server Error', stack: err.stack, name: err.name, msg: err.message,
+    message: 'Internal Server Error',
+    stack: err.stack,
+    name: err.name,
+    msg: err.message,
   });
 };

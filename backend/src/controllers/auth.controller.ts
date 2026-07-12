@@ -4,12 +4,14 @@ import { authService } from '../services/auth.service.js';
 export const authController = {
   registerCompany: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const result = await authService.registerCompany(req.body as {
-        companyName: string;
-        name: string;
-        email: string;
-        password: string;
-      });
+      const result = await authService.registerCompany(
+        req.body as {
+          companyName: string;
+          name: string;
+          email: string;
+          password: string;
+        }
+      );
       res.status(201).json({ success: true, data: result });
     } catch (err) {
       next(err);

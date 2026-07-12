@@ -12,10 +12,7 @@ const generateTempPassword = (): string => {
 };
 
 export const companyService = {
-  inviteUser: async (
-    companyId: number,
-    data: { name: string; email: string; roleId: number }
-  ) => {
+  inviteUser: async (companyId: number, data: { name: string; email: string; roleId: number }) => {
     // Validate roleId exists
     const role = await prisma.roles.findUnique({ where: { id: data.roleId } });
     if (!role) {

@@ -8,8 +8,8 @@ export const CreateDriverSchema = z.object({
     status: z.nativeEnum(DriverStatus),
     safety_score: z.number().nonnegative(),
     license_type: z.string().min(1),
-    expiry_date: z.string().datetime()
-  })
+    expiry_date: z.string().datetime(),
+  }),
 });
 
 export const UpdateDriverSchema = z.object({
@@ -17,9 +17,9 @@ export const UpdateDriverSchema = z.object({
     status: z.nativeEnum(DriverStatus).optional(),
     safety_score: z.number().nonnegative().optional(),
     license_type: z.string().min(1).optional(),
-    expiry_date: z.string().datetime().optional()
+    expiry_date: z.string().datetime().optional(),
   }),
   params: z.object({
-    driverId: z.string().regex(/^\d+$/, 'Driver ID must be a number')
-  })
+    driverId: z.string().regex(/^\d+$/, 'Driver ID must be a number'),
+  }),
 });

@@ -15,11 +15,13 @@ export async function getKpiHandler(
   next: NextFunction
 ): Promise<void> {
   try {
-    const filters = JSON.parse(JSON.stringify({
-      vehicleType: req.query.vehicleType,
-      vehicleStatus: req.query.vehicleStatus,
-      region: req.query.region
-    })) as KpiFilters;
+    const filters = JSON.parse(
+      JSON.stringify({
+        vehicleType: req.query.vehicleType,
+        vehicleStatus: req.query.vehicleStatus,
+        region: req.query.region,
+      })
+    ) as KpiFilters;
 
     const kpis = await getFleetKpis(filters);
 

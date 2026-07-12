@@ -1,12 +1,10 @@
 import { ExpenseRepository } from '../repositories/expense.repository.js';
 import { TripRepository } from '../repositories/trip.repository.js';
-import { VehicleRepository } from '../repositories/vehicle.repository.js';
 import { NotFoundError, ForbiddenError, BadRequestError } from '../errors/index.js';
 import type { Expenses } from '@prisma/client';
 
 const expenseRepository = new ExpenseRepository();
 const tripRepository = new TripRepository();
-const vehicleRepository = new VehicleRepository();
 
 export class ExpenseService {
   async recordExpense(
