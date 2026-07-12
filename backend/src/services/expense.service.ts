@@ -40,4 +40,8 @@ export class ExpenseService {
       others: data.others,
     });
   }
+
+  async getExpenses(companyId: number) {
+    return expenseRepository.findByCompany(companyId);
+  }
 }

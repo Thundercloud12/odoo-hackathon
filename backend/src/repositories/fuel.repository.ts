@@ -15,4 +15,17 @@ export class FuelRepository {
     });
     return aggregate._sum.fuel_cost || 0;
   }
+
+  async findByCompany(companyId: number): Promise<Fuel_Logs[]> {
+    return prisma.fuel_Logs.findMany({
+      where: {
+        vehicle: {
+          company_id: companyId,
+        },
+      },
+      orderBy: {
+        date: 'desc',
+      },
+    });
+  }
 }
